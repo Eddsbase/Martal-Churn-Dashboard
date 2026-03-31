@@ -1,285 +1,488 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Martal Group — Performance &amp; Churn Intelligence Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Martal Group — Operations Dashboard</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230a0a12'/><text x='16' y='22' text-anchor='middle' font-size='18' fill='%234ade80' font-family='sans-serif' font-weight='bold'>M</text></svg>">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.12.7/Recharts.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:'Inter','system-ui',sans-serif;background:#e8e8e8;color:#0d0d0d;}
-.ann{background:#f0f7e8;border-bottom:1px solid rgba(74,138,24,0.25);padding:7px 20px;text-align:center;font-size:11px;font-weight:600;letter-spacing:0.8px;color:#3a6b10;}
-.nav{background:#fff;border-bottom:1px solid #d4d4d4;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
-.logo{display:flex;align-items:center;gap:10px;}
-.logo-bar{width:4px;height:24px;background:#5aab1f;border-radius:2px;}
-.logo-text{font-size:17px;font-weight:900;letter-spacing:2px;text-transform:uppercase;line-height:1;}
-.logo-sub{font-size:8px;color:#707070;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
-.tabs{display:flex;gap:0;}
-.tab-btn{padding:0 18px;height:52px;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:transparent;color:#707070;font-family:inherit;transition:color 0.15s,border-color 0.15s;}
-.tab-btn.active{color:#5aab1f;border-bottom-color:#5aab1f;}
-.content{max-width:980px;margin:0 auto;padding:28px 20px;}
-.page-title{font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:-0.5px;line-height:1.1;margin-bottom:8px;}
-.page-title span{color:#5aab1f;}
-.title-bar{width:40px;height:3px;background:#5aab1f;border-radius:2px;margin-bottom:24px;}
-.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.stat{background:#f3f3f3;border:1px solid #d4d4d4;border-radius:6px;padding:14px 16px;flex:1;min-width:110;position:relative;overflow:hidden;}
-.stat-bar{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;}
-.stat-label{color:#707070;font-size:9px;margin-bottom:6px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;}
-.stat-value{font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1;}
-.stat-sub{color:#b0b0b0;font-size:9px;margin-top:4px;letter-spacing:0.3px;}
-.card{background:#fff;border:1px solid #d4d4d4;border-radius:6px;padding:16px 18px;margin-bottom:10px;}
-.section-label{color:#707070;font-size:9px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;gap:8px;}
-.section-label::before{content:'';width:16px;height:1px;background:#5aab1f;opacity:0.6;}
-.pill{border-radius:3px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;display:inline-block;}
-.chart-wrap{position:relative;width:100%;margin-bottom:4px;}
-select{width:100%;background:#f3f3f3;color:#0d0d0d;border:1px solid #bebebe;border-radius:4px;padding:9px 14px;font-size:14px;font-family:inherit;outline:none;}
-table{width:100%;border-collapse:collapse;font-size:12px;}
-th{padding:6px 10px;text-align:left;color:#707070;font-weight:700;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #bebebe;}
-td{padding:7px 10px;border-bottom:1px solid #d4d4d4;}
-tr:nth-child(even){background:#ebebeb;}
-.muted{color:#707070;}
-.som-header{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #d4d4d4;}
-.som-name{font-size:20px;font-weight:800;letter-spacing:-0.5px;}
-.som-meta{color:#707070;font-size:11px;margin-top:4px;}
-.method-block{margin-bottom:10px;}
-.method-title{color:#5aab1f;font-weight:800;font-size:11px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;gap:8px;}
-.method-icon{width:12px;height:12px;background:#5aab1f;border-radius:2px;flex-shrink:0;}
-.method-list{margin:0;padding:0 0 0 20px;}
-.method-list li{margin-bottom:5px;color:#707070;font-size:12px;line-height:1.7;}
-.placeholder{color:#b0b0b0;font-size:13px;padding:48px 0;text-align:center;}
-.pills-wrap{display:flex;flex-wrap:wrap;gap:5px;}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06060e;--bg2:#0c0c1a;--bg3:#111126;--card:#0d0d1f;--card-hover:#111130;
+  --border:#1a1a35;--border2:#252550;
+  --text:#e8edf5;--text2:#8892a8;--text3:#555f75;
+  --green:#4ade80;--green-dim:#2dd468;--green-bg:rgba(74,222,128,0.06);--green-border:rgba(74,222,128,0.12);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.06);--red-border:rgba(239,68,68,0.12);
+  --yellow:#facc15;--yellow-bg:rgba(250,204,21,0.05);--yellow-border:rgba(250,204,21,0.12);
+  --blue:#60a5fa;--blue-bg:rgba(96,165,250,0.06);--blue-border:rgba(96,165,250,0.12);
+  --orange:#f97316;--purple:#a78bfa;--purple-bg:rgba(167,139,250,0.06);--purple-border:rgba(167,139,250,0.12);
+  --glow:0 0 40px rgba(74,222,128,0.03);
+  --radius:10px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;
+  background-image:radial-gradient(ellipse at 50% 0%,rgba(74,222,128,0.015) 0%,transparent 60%)}
+#root{max-width:1480px;margin:0 auto;padding:20px 28px 60px}
+.mono{font-family:'JetBrains Mono',monospace}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.fade-up{animation:fadeUp .4s ease both}
+.fade-up-1{animation-delay:.05s}
+.fade-up-2{animation-delay:.1s}
+.fade-up-3{animation-delay:.15s}
+.fade-up-4{animation-delay:.2s}
+.team-row{transition:background .15s}
+.team-row:hover{background:rgba(74,222,128,0.03)!important}
+.tab-btn{transition:all .2s}
+.tab-btn:hover:not(.tab-active){background:rgba(255,255,255,0.04)!important}
+::selection{background:rgba(74,222,128,0.25);color:#fff}
 </style>
 </head>
 <body>
-<div class="ann">PERFORMANCE &amp; CHURN INTELLIGENCE DASHBOARD · MARCH 2026 · INTERNAL USE ONLY</div>
-<div class="nav">
-  <div class="logo"><div class="logo-bar"></div><div><div class="logo-text">MARTAL GROUP</div><div class="logo-sub">B2B Lead Generation Agency</div></div></div>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('company')">Company</button>
-    <button class="tab-btn" onclick="showTab('reps')">Sales Reps</button>
-    <button class="tab-btn" onclick="showTab('soms')">Sales Ops</button>
-    <button class="tab-btn" onclick="showTab('method')">Methodology</button>
-  </div>
-</div>
-<div class="content" id="main-content"></div>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useMemo,useCallback,useEffect}=React;
+const {LineChart,Line,BarChart,Bar,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer,Cell,ReferenceLine,ComposedChart,Area}=Recharts;
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script>
-// ── DATA ──
 const RAW=[
-{m:"Feb 22",mrr:585,ac:82,dc:12,cl:19,eb:193},{m:"Mar 22",mrr:573,ac:81,dc:17,cl:15,eb:137},
-{m:"Apr 22",mrr:604,ac:87,dc:17,cl:15,eb:103},{m:"May 22",mrr:644,ac:87,dc:19,cl:19,eb:103},
-{m:"Jun 22",mrr:599,ac:85,dc:17,cl:17,eb:114},{m:"Jul 22",mrr:584,ac:88,dc:21,cl:9,eb:105},
-{m:"Aug 22",mrr:690,ac:93,dc:22,cl:16,eb:35},{m:"Sep 22",mrr:750,ac:97,dc:16,cl:9,eb:135},
-{m:"Oct 22",mrr:720,ac:85,dc:8,cl:20,eb:86},{m:"Nov 22",mrr:644,ac:83,dc:7,cl:12,eb:97},
-{m:"Dec 22",mrr:670,ac:75,dc:7,cl:11,eb:148},{m:"Jan 23",mrr:563,ac:75,dc:13,cl:15,eb:68},
-{m:"Feb 23",mrr:615,ac:76,dc:16,cl:10,eb:135},{m:"Mar 23",mrr:642,ac:86,dc:17,cl:7,eb:109},
-{m:"Apr 23",mrr:665,ac:97,dc:21,cl:14,eb:67},{m:"May 23",mrr:715,ac:95,dc:11,cl:18,eb:90},
-{m:"Jun 23",mrr:703,ac:91,dc:12,cl:19,eb:63},{m:"Jul 23",mrr:645,ac:91,dc:18,cl:12,eb:84},
-{m:"Aug 23",mrr:681,ac:90,dc:13,cl:16,eb:150},{m:"Sep 23",mrr:624,ac:96,dc:18,cl:11,eb:38},
-{m:"Oct 23",mrr:751,ac:96,dc:13,cl:13,eb:68},{m:"Nov 23",mrr:714,ac:89,dc:15,cl:23,eb:114},
-{m:"Dec 23",mrr:665,ac:89,dc:17,cl:11,eb:87},{m:"Jan 24",mrr:722,ac:92,dc:12,cl:11,eb:181},
-{m:"Feb 24",mrr:658,ac:99,dc:21,cl:15,eb:13},{m:"Mar 24",mrr:680,ac:98,dc:15,cl:19,eb:0},
-{m:"Apr 24",mrr:696,ac:99,dc:21,cl:21,eb:139},{m:"May 24",mrr:792,ac:104,dc:23,cl:20,eb:135},
-{m:"Jun 24",mrr:809,ac:106,dc:20,cl:22,eb:154},{m:"Jul 24",mrr:781,ac:105,dc:25,cl:21,eb:102},
-{m:"Aug 24",mrr:756,ac:105,dc:13,cl:15,eb:56},{m:"Sep 24",mrr:745,ac:100,dc:13,cl:28,eb:52},
-{m:"Oct 24",mrr:710,ac:100,dc:28,cl:25,eb:21},{m:"Nov 24",mrr:730,ac:88,dc:11,cl:20,eb:117},
-{m:"Dec 24",mrr:626,ac:85,dc:17,cl:18,eb:-44},{m:"Jan 25",mrr:650,ac:96,dc:26,cl:22,eb:7},
-{m:"Feb 25",mrr:733,ac:103,dc:29,cl:14,eb:147},{m:"Mar 25",mrr:768,ac:109,dc:22,cl:16,eb:61},
-{m:"Apr 25",mrr:812,ac:106,dc:15,cl:16,eb:138},{m:"May 25",mrr:780,ac:101,dc:19,cl:23,eb:125},
-{m:"Jun 25",mrr:783,ac:95,dc:15,cl:19,eb:47},{m:"Jul 25",mrr:728,ac:87,dc:16,cl:24,eb:124},
-{m:"Aug 25",mrr:741,ac:95,dc:23,cl:13,eb:193},{m:"Sep 25",mrr:860,ac:100,dc:18,cl:16,eb:198},
-{m:"Oct 25",mrr:806,ac:99,dc:19,cl:13,eb:185},{m:"Nov 25",mrr:637,ac:94,dc:12,cl:16,eb:-32},
-{m:"Dec 25",mrr:721,ac:101,dc:23,cl:15,eb:137},{m:"Jan 26",mrr:815,ac:105,dc:22,cl:15,eb:130},
-{m:"Feb 26",mrr:644,ac:106,dc:23,cl:17,eb:64},{m:"Mar 26",mrr:726,ac:113,dc:12,cl:10,eb:0}
+  {m:"Aug 21",ac:55,dc:0,cl:0},{m:"Sep 21",ac:57,dc:4,cl:2},{m:"Oct 21",ac:62,dc:8,cl:3},
+  {m:"Nov 21",ac:65,dc:7,cl:4},{m:"Dec 21",ac:64,dc:5,cl:6},{m:"Jan 22",ac:71,dc:12,cl:5},
+  {m:"Feb 22",ac:82,dc:12,cl:1},{m:"Mar 22",ac:81,dc:17,cl:15},{m:"Apr 22",ac:87,dc:17,cl:15},
+  {m:"May 22",ac:87,dc:19,cl:19},{m:"Jun 22",ac:85,dc:17,cl:17},{m:"Jul 22",ac:88,dc:21,cl:9},
+  {m:"Aug 22",ac:93,dc:22,cl:16},{m:"Sep 22",ac:94,dc:17,cl:15},{m:"Oct 22",ac:96,dc:19,cl:17},
+  {m:"Nov 22",ac:93,dc:13,cl:16},{m:"Dec 22",ac:90,dc:10,cl:13},{m:"Jan 23",ac:89,dc:13,cl:14},
+  {m:"Feb 23",ac:88,dc:15,cl:16},{m:"Mar 23",ac:93,dc:18,cl:13},{m:"Apr 23",ac:93,dc:16,cl:16},
+  {m:"May 23",ac:88,dc:10,cl:15},{m:"Jun 23",ac:92,dc:16,cl:12},{m:"Jul 23",ac:93,dc:13,cl:12},
+  {m:"Aug 23",ac:89,dc:8,cl:12},{m:"Sep 23",ac:88,dc:10,cl:11},{m:"Oct 23",ac:96,dc:19,cl:11},
+  {m:"Nov 23",ac:93,dc:12,cl:15},{m:"Dec 23",ac:90,dc:9,cl:12},{m:"Jan 24",ac:85,dc:8,cl:13},
+  {m:"Feb 24",ac:87,dc:12,cl:10},{m:"Mar 24",ac:88,dc:12,cl:11},{m:"Apr 24",ac:86,dc:8,cl:10},
+  {m:"May 24",ac:85,dc:7,cl:8},{m:"Jun 24",ac:80,dc:4,cl:9},{m:"Jul 24",ac:80,dc:10,cl:10},
+  {m:"Aug 24",ac:84,dc:15,cl:11},{m:"Sep 24",ac:89,dc:16,cl:11},{m:"Oct 24",ac:96,dc:19,cl:12},
+  {m:"Nov 24",ac:103,dc:20,cl:13},{m:"Dec 24",ac:103,dc:15,cl:15},{m:"Jan 25",ac:109,dc:20,cl:14},
+  {m:"Feb 25",ac:111,dc:18,cl:16},{m:"Mar 25",ac:101,dc:10,cl:20},
+  {m:"Apr 25",ac:96,dc:9,cl:14},{m:"May 25",ac:91,dc:7,cl:12},{m:"Jun 25",ac:90,dc:10,cl:11},
+  {m:"Jul 25",ac:92,dc:12,cl:10},{m:"Aug 25",ac:95,dc:14,cl:11},{m:"Sep 25",ac:98,dc:15,cl:12},
+  {m:"Oct 25",ac:101,dc:16,cl:13},{m:"Nov 25",ac:105,dc:17,cl:13},{m:"Dec 25",ac:103,dc:13,cl:15},
+  {m:"Jan 26",ac:107,dc:18,cl:14},{m:"Feb 26",ac:111,dc:17,cl:13},{m:"Mar 26",ac:113,dc:12,cl:10}
 ];
-const MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const mIdx=m=>{const p=m.split(" ");return parseInt(p[1])*12+MO.indexOf(p[0]);};
-const withCR=arr=>arr.map((d,i)=>{if(i<3)return{...d,cr:null};const avg=(arr[i-1].ac+arr[i-2].ac+arr[i-3].ac)/3;return{...d,cr:parseFloat(((d.cl/avg)*100).toFixed(2))};});
-const CD=withCR(RAW);
-const ALL_M=CD.map(d=>d.m);
-const PEN={"Rep Issue":8,"Sales Ops Issue":8,"Lack of Results":6,"No Closed Deals":6,"Single Rep Account":5,"No Show Issue":5,"Poor List Quality":3,"Slow Start":3,"Budget Issue":1,"Didnt Pay":1,"Accepted Landbase":1,"Leadership Intervention":2};
-const crCol=v=>v==null?"#707070":v<10?"#3a8c0f":v<15?"#f5c518":v<20?"#f97316":"#dc2626";
-const rsnCol=r=>{if(!r)return"#707070";if(["Rep Issue","Sales Ops Issue"].includes(r))return"#dc2626";if(["Lack of Results","No Closed Deals","No Show Issue","Single Rep Account"].includes(r))return"#ea580c";if(["Poor List Quality","Slow Start"].includes(r))return"#ca8a04";return"#5aab1f";};
-const churnScore=accs=>Math.min(100,Math.round(accs.filter(a=>a.end).reduce((s,a)=>s+(PEN[a.reason]||1),0)));
 
-const SOMS=[
-{name:"David Rosenthal",perf:[{m:"Jul 24",mql:14.2,sql:2},{m:"Aug 24",mql:29.8,sql:4},{m:"Sep 24",mql:16.9,sql:2.3},{m:"Oct 24",mql:18.3,sql:3.4},{m:"Nov 24",mql:19.7,sql:3.9},{m:"Dec 24",mql:15.3,sql:3},{m:"Jan 25",mql:22.1,sql:3.5},{m:"Feb 25",mql:25.2,sql:4.3},{m:"Mar 25",mql:28.6,sql:5.1},{m:"Apr 25",mql:30.1,sql:3.9},{m:"May 25",mql:22.6,sql:3.25},{m:"Jun 25",mql:19.3,sql:3.8},{m:"Jul 25",mql:22.8,sql:4.5},{m:"Aug 25",mql:16.7,sql:4,mtg:3.15},{m:"Sep 25",mql:14.5,sql:5.1,mtg:3.6},{m:"Oct 25",mql:18.5,sql:5.6,mtg:2.1},{m:"Nov 25",mql:20.7,sql:6.2,mtg:2.2},{m:"Dec 25",mql:13.1,sql:4.9,mtg:1.9},{m:"Jan 26",mql:9.8,sql:2.7,mtg:2},{m:"Feb 26",mql:16.2,sql:5.3,mtg:2.1},{m:"Mar 26",mql:16.2,sql:6.3,mtg:2.3}],reps:["Frankie Dore","Blake Peremel","Eric Tuttle","Ariel Wolfe","Dominic Libertoski","Paige Givinsky","Joshua Bylsma","Kellee Madonia","Bill O'Leary","Alyssa Perez","Jay Jones","Angela Hamilton","Harjit Sawhney","Mark Kreidler","Cesar Garcia","Joshua Crawford"],accounts:[{name:"Aixigo",start:"Aug 23",end:null,reps:["Frankie Dore"]},{name:"Sentinel",start:"Jan 25",end:null,reps:["Harjit Sawhney","Eric Tuttle","Mark Kreidler"]},{name:"Securance Consulting",start:"Jul 25",end:null,reps:["Blake Peremel","Eric Tuttle"]},{name:"Pentaho - Hitachi",start:"Aug 25",end:null,reps:["Ariel Wolfe","Blake Peremel"]},{name:"Varya Virtual",start:"Dec 25",end:null,reps:["Paige Givinsky","Joshua Bylsma"]},{name:"Focus Bankers",start:"Dec 25",end:null,reps:["Ariel Wolfe","Dominic Libertoski"]},{name:"TigerPak",start:"Jan 26",end:null,reps:["Frankie Dore"]},{name:"WRS Health",start:"Jan 26",end:null,reps:["Angela Hamilton"]},{name:"Elevation Services",start:"Jan 26",end:null,reps:["Frankie Dore","Bill O'Leary"]},{name:"MyMethod AI",start:"Jan 26",end:null,reps:["Kellee Madonia","Bill O'Leary"]},{name:"InteradCorp",start:"Feb 26",end:null,reps:["Alyssa Perez","Jay Jones"]},{name:"Pro Purchaser",start:"Mar 26",end:null,reps:["Bill O'Leary","Jay Jones"]},{name:"SFC",start:"Mar 26",end:null,reps:["Joshua Bylsma"]},{name:"Truelty",start:"Mar 26",end:null,reps:["Cesar Garcia","Joshua Crawford"]},{name:"Infolink Tax",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:["Blake Peremel"]},{name:"Nava Software",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Eric Tuttle","Anand Pandey"]},{name:"One River",start:"Jan 25",end:"Feb 26",reason:"Budget Issue",reps:["Eric Tuttle"]},{name:"WRS Health (churned)",start:"Jan 26",end:"Apr 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"JumpCloud",start:"Jan 25",end:"Mar 26",reason:"Lack of Results",reps:["Eric Tuttle"]},{name:"Focus Bankers (churned)",start:"Dec 25",end:"May 26",reason:"Budget Issue",reps:["Ariel Wolfe","Dominic Libertoski"]}]},
-{name:"Matt Guthrie",perf:[{m:"Jul 24",mql:17.3,sql:3.4},{m:"Aug 24",mql:21.1,sql:6.9},{m:"Sep 24",mql:21.4,sql:4.2},{m:"Oct 24",mql:17.4,sql:3.6},{m:"Nov 24",mql:14,sql:2.4},{m:"Dec 24",mql:12.5,sql:3.6},{m:"Jan 25",mql:10,sql:1.9},{m:"Feb 25",mql:18.9,sql:3.8},{m:"Mar 25",mql:24,sql:4},{m:"Apr 25",mql:24.2,sql:3.8},{m:"May 25",mql:26.7,sql:7},{m:"Jun 25",mql:19.4,sql:5.5},{m:"Jul 25",mql:21,sql:5.4},{m:"Aug 25",mql:24,sql:5.7,mtg:3.1},{m:"Sep 25",mql:26.3,sql:7.8,mtg:4.7},{m:"Oct 25",mql:22.6,sql:6.6,mtg:3.5},{m:"Nov 25",mql:38.1,sql:11.7,mtg:3.1},{m:"Dec 25",mql:32.5,sql:8,mtg:2.75},{m:"Jan 26",mql:12.3,sql:5.4,mtg:3.2},{m:"Feb 26",mql:18.4,sql:6,mtg:2.8},{m:"Mar 26",mql:23.4,sql:6.6,mtg:2.9}],reps:["Angela Hamilton","Joshua Crawford","Dominic Libertoski","Jesse Shorr","Tim Lan","Blake Peremel","Rebecca Barnes","Frankie Dore","Joshua Bylsma","Anand Pandey","Korbin Kirk","Derek Sindelman","Bill O'Leary","Alyssa Perez","Mark Kreidler","Anthony Allen","Kellee Madonia","Jay Jones"],accounts:[{name:"Adippsa",start:"Oct 25",end:null,reps:["Angela Hamilton","Joshua Crawford"]},{name:"Envirolyte",start:"Dec 25",end:null,reps:["Dominic Libertoski","Jesse Shorr"]},{name:"NIFTIT",start:"Dec 25",end:null,reps:["Eric Tuttle","Dominic Libertoski"]},{name:"Prediction Data",start:"Dec 25",end:null,reps:["Dominic Libertoski","Rebecca Barnes"]},{name:"Upstream Thinking",start:"Dec 25",end:null,reps:["Tim Lan"]},{name:"Risk Ledger",start:"Jan 26",end:"Apr 26",reason:"Budget Issue",reps:["Blake Peremel","Rebecca Barnes","Jay Jones","Kellee Madonia"]},{name:"Trifork",start:"Jan 26",end:null,reps:["Blake Peremel"]},{name:"Genomadix",start:"Jan 26",end:null,reps:["Frankie Dore","Rebecca Barnes"]},{name:"Rodan Energy",start:"Jan 26",end:null,reps:["Joshua Bylsma"]},{name:"Intellect",start:"Jan 26",end:null,reps:["Anand Pandey","Korbin Kirk","Derek Sindelman","Dominic Libertoski"]},{name:"Working Backwards",start:"Feb 26",end:null,reps:["Bill O'Leary","Anand Pandey","Alyssa Perez","Dominic Libertoski","Mark Kreidler"]},{name:"LRDG Online",start:"Feb 26",end:null,reps:["Blake Peremel"]},{name:"AJT Advisory",start:"Feb 26",end:null,reps:["Dominic Libertoski"]},{name:"DataMasque",start:"Mar 26",end:null,reps:["Anthony Allen","Kellee Madonia"]},{name:"KK Industrial",start:"Mar 26",end:null,reps:["Joshua Bylsma"]},{name:"Penske",start:"Mar 26",end:null,reps:["Joshua Bylsma","Korbin Kirk"]},{name:"The Plug T-Shirt Store",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Alli Fowler","Angela Hamilton"]},{name:"Innowell",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Alex P"]},{name:"BluPax Pharma",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Cesar Garcia","Ariel Wolfe","Tim Lan"]},{name:"NIFTIT (churned)",start:"Dec 25",end:"Apr 26",reason:"Lack of Results",reps:["Eric Tuttle","Dominic Libertoski"]},{name:"Prediction Data (churned)",start:"Dec 25",end:"Apr 26",reason:"Budget Issue",reps:["Dominic Libertoski","Rebecca Barnes"]}]},
-{name:"Venus Powers",perf:[{m:"Jul 24",mql:12.1,sql:3.6},{m:"Aug 24",mql:15.4,sql:3.6},{m:"Sep 24",mql:19,sql:4.3},{m:"Oct 24",mql:13.9,sql:3.2},{m:"Nov 24",mql:15.1,sql:4.1},{m:"Dec 24",mql:19.7,sql:2.4},{m:"Jan 25",mql:9.3,sql:1.3},{m:"Feb 25",mql:16.1,sql:2.9},{m:"Mar 25",mql:17.4,sql:2.4},{m:"Apr 25",mql:23.5,sql:3.9},{m:"May 25",mql:27.8,sql:4.7},{m:"Jun 25",mql:26.3,sql:3.2},{m:"Jul 25",mql:26.5,sql:5.8},{m:"Aug 25",mql:35,sql:8,mtg:1.7},{m:"Sep 25",mql:22.1,sql:4.4,mtg:1.8},{m:"Oct 25",mql:41.4,sql:5,mtg:2.2},{m:"Nov 25",mql:28.1,sql:3.1,mtg:1.4},{m:"Dec 25",mql:30.8,sql:4.9,mtg:1.3},{m:"Jan 26",mql:18.4,sql:2.6,mtg:1.1},{m:"Feb 26",mql:31.3,sql:4.3,mtg:1.7},{m:"Mar 26",mql:32.1,sql:3,mtg:1.1}],reps:["Derek Sindelman","Tim Lan","Stephanie Hackert","Paige Givinsky","Joshua Crawford","Angela Hamilton","Jesse Shorr","Blake Peremel","Alli Fowler","Cesar Garcia","Anand Pandey","Kellee Madonia","Frankie Dore","Jay Jones"],accounts:[{name:"HungaroTrial",start:"Jan 25",end:null,reps:["Derek Sindelman","Tim Lan","Stephanie Hackert"]},{name:"HungaroTrial GC 2202",start:"Jan 25",end:null,reps:["Anand Pandey","Jay Jones","Tim Lan"]},{name:"Inneos",start:"Mar 25",end:null,reps:["Paige Givinsky","Joshua Crawford"]},{name:"Adage Tech",start:"Oct 25",end:null,reps:["Tim Lan","Angela Hamilton"]},{name:"US Cloud",start:"Oct 25",end:null,reps:["Jesse Shorr","Blake Peremel","Stephanie Hackert","Alli Fowler","Frankie Dore","Jay Jones"]},{name:"Elec8RCM",start:"Nov 25",end:null,reps:["Venus Powers"]},{name:"Roar for Good",start:"Dec 25",end:null,reps:["Stephanie Hackert","Derek Sindelman","Paige Givinsky"]},{name:"Atracsys",start:"Feb 26",end:null,reps:["Stephanie Hackert","Joshua Crawford"]},{name:"Lexbe",start:"Feb 26",end:null,reps:["Alli Fowler","Anand Pandey","Cesar Garcia","Derek Sindelman"]},{name:"Integrated Global",start:"Feb 26",end:null,reps:["Angela Hamilton","Kellee Madonia"]},{name:"Validfor",start:"Feb 26",end:null,reps:["Derek Sindelman","Ariel Wolfe"]},{name:"TCS Canada",start:"Jan 25",end:"Jan 26",reason:"Budget Issue",reps:["Bill O'Leary","Angela Hamilton"]}]},
-{name:"Jason Andrews",perf:[{m:"Jul 24",mql:20.4,sql:3.7},{m:"Aug 24",mql:19.6,sql:4.9},{m:"Sep 24",mql:15,sql:2.2},{m:"Oct 24",mql:23.8,sql:2.6},{m:"Nov 24",mql:19.9,sql:1.7},{m:"Dec 24",mql:13.1,sql:1.8},{m:"Jan 25",mql:10.8,sql:2.2},{m:"Feb 25",mql:16.9,sql:4.3},{m:"Mar 25",mql:19.6,sql:5.6},{m:"Apr 25",mql:22.7,sql:5.7},{m:"May 25",mql:23.4,sql:2.5},{m:"Jun 25",mql:15.1,sql:2.4},{m:"Jul 25",mql:17.5,sql:2.1},{m:"Aug 25",mql:19.5,sql:2,mtg:1.1},{m:"Sep 25",mql:17.2,sql:1.4,mtg:0.8},{m:"Oct 25",mql:13.1,sql:1.7,mtg:1.1},{m:"Nov 25",mql:19,sql:3,mtg:1.4},{m:"Dec 25",mql:16.7,sql:3,mtg:2},{m:"Jan 26",mql:10.2,sql:2,mtg:1},{m:"Feb 26",mql:16.3,sql:3.1,mtg:1.1},{m:"Mar 26",mql:16.7,sql:2.1,mtg:1.3}],reps:["Paige Givinsky","Jesse Shorr","Blake Peremel","Savannah Peck","Joshua Crawford","Anand Pandey","Rebecca Barnes","Alyssa Perez","Tim Lan","Kellee Madonia"],accounts:[{name:"Vistaar",start:"Apr 24",end:null,reps:["Paige Givinsky","Jesse Shorr"]},{name:"Paydoff",start:"Dec 25",end:null,reps:["Blake Peremel"]},{name:"ShiftLab LLC",start:"Jan 26",end:null,reps:["Savannah Peck","Joshua Crawford"]},{name:"All Star Digital",start:"Jan 26",end:null,reps:["Anand Pandey","Rebecca Barnes"]},{name:"Heinsohn",start:"Feb 26",end:null,reps:["Alyssa Perez","Blake Peremel"]},{name:"United Salon Technologies",start:"Mar 26",end:null,reps:["Anand Pandey","Kellee Madonia"]},{name:"Pacific Forge",start:"Mar 26",end:null,reps:["Jesse Shorr"]},{name:"Edgerton Forge",start:"Mar 26",end:null,reps:["Savannah Peck"]},{name:"Direct Defense",start:"Mar 26",end:null,reps:["Tim Lan"]},{name:"Lean Excellence",start:"Mar 26",end:null,reps:["Jesse Shorr"]},{name:"Markanyx",start:"Mar 26",end:null,reps:["Savannah Peck"]},{name:"SPG Vending",start:"Mar 26",end:null,reps:["Joshua Bylsma"]},{name:"Neat Data",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Land Journey AI",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Bill O'Leary","Alyssa Perez"]},{name:"DYODE",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Anand Pandey","Joshua Crawford"]},{name:"Slow Road Photo",start:"Dec 25",end:"Feb 26",reason:"Budget Issue",reps:["Dominic Libertoski"]},{name:"Hyundai Robotics",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Anthony Allen","Rebecca Barnes","Anand Pandey"]}]},
-{name:"Grant Paris",perf:[{m:"Jul 24",mql:20,sql:3},{m:"Aug 24",mql:23.3,sql:6},{m:"Sep 24",mql:26.8,sql:3},{m:"Oct 24",mql:23.2,sql:2.2},{m:"Nov 24",mql:20.7,sql:3},{m:"Dec 24",mql:10.4,sql:2.5},{m:"Jan 25",mql:14.9,sql:2.9},{m:"Feb 25",mql:20.8,sql:4.1},{m:"Mar 25",mql:18.8,sql:4.3},{m:"Apr 25",mql:23.3,sql:7.4},{m:"May 25",mql:31.3,sql:15.4},{m:"Jun 25",mql:24.4,sql:5.3},{m:"Jul 25",mql:16.4,sql:4.1},{m:"Aug 25",mql:18.9,sql:3.5},{m:"Sep 25",mql:11.3,sql:2.9,mtg:1.7},{m:"Oct 25",mql:20.6,sql:4.9,mtg:2.3},{m:"Nov 25",mql:20.6,sql:4.1,mtg:5.5},{m:"Dec 25",mql:20.5,sql:4.2,mtg:13.8},{m:"Jan 26",mql:12.1,sql:2.1,mtg:2},{m:"Feb 26",mql:28.4,sql:4.6,mtg:1.4},{m:"Mar 26",mql:19.2,sql:3.2,mtg:0.8}],reps:["Michele Harris","Tim Lan","Frankie Dore","Alli Fowler","Anand Pandey","Logan Kennedy","Cesar Garcia","Savannah Peck","Jesse Shorr","Joshua Crawford","Harjit Sawhney","Dominic Libertoski","Angela Hamilton"],accounts:[{name:"Solver Inc",start:"Mar 25",end:null,reps:["Michele Harris","Tim Lan"]},{name:"Elevate Cloud",start:"Nov 25",end:null,reps:["Anand Pandey","Logan Kennedy"]},{name:"Whale",start:"Dec 25",end:null,reps:["Tim Lan","Frankie Dore","Alli Fowler"]},{name:"KIS Solutions",start:"Jan 26",end:null,reps:["Cesar Garcia","Javion"]},{name:"Jiffy Junk",start:"Jan 26",end:null,reps:["Alli Fowler","Savannah Peck"]},{name:"Quality Engenharia",start:"Feb 26",end:null,reps:["Jesse Shorr"]},{name:"TipTap",start:"Feb 26",end:null,reps:["Alli Fowler"]},{name:"Syntrio Solutions",start:"Feb 26",end:null,reps:["Harjit Sawhney"]},{name:"CSW Solutions",start:"Feb 26",end:null,reps:["Joshua Crawford"]},{name:"MicroServe",start:"Feb 26",end:null,reps:["Angela Hamilton"]},{name:"Brave",start:"Mar 26",end:null,reps:["Cesar Garcia","Dominic Libertoski"]},{name:"Recruit in Motion",start:"Jan 26",end:"Jan 26",reason:"Accepted Landbase",reps:["Anand Pandey","Tim Lan"]},{name:"Acoem ATD",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Alli Fowler","Logan Kennedy"]},{name:"Itransition",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Anthony Allen","Logan Kennedy"]},{name:"Alloy Automation",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Tim Lan","Savannah Peck","Anthony Allen"]},{name:"Elevate Cloud (churned)",start:"Nov 25",end:"Mar 26",reason:"Budget Issue",reps:["Anand Pandey","Logan Kennedy"]}]},
-{name:"James Bellew",perf:[{m:"Nov 24",mql:15.5,sql:0},{m:"Dec 24",mql:24.7,sql:3.7},{m:"Jan 25",mql:12.6,sql:2.1},{m:"Feb 25",mql:15,sql:2.3},{m:"Mar 25",mql:9.5,sql:2.5},{m:"Apr 25",mql:19.6,sql:2.1},{m:"May 25",mql:15.1,sql:3.9},{m:"Jun 25",mql:15.8,sql:5.2},{m:"Jul 25",mql:16,sql:6.4},{m:"Aug 25",mql:22.1,sql:6.9},{m:"Sep 25",mql:18,sql:6.2,mtg:2.7},{m:"Oct 25",mql:20.3,sql:7.1,mtg:2.4},{m:"Nov 25",mql:22.3,sql:5.8,mtg:3.7},{m:"Dec 25",mql:18.8,sql:5,mtg:1.8},{m:"Jan 26",mql:19.6,sql:4.6,mtg:3.1},{m:"Feb 26",mql:21.1,sql:6.3,mtg:2.7},{m:"Mar 26",mql:12.1,sql:2.5,mtg:0.75}],reps:["Ariel Wolfe","Frankie Dore","Eli Johnson","Johan Vrey"],accounts:[{name:"GESAC",start:"Mar 25",end:null,reps:["Ariel Wolfe","Frankie Dore"]},{name:"Westhire",start:"Jan 26",end:null,reps:["Ariel Wolfe"]},{name:"Access Charity",start:"Jan 26",end:null,reps:["Ariel Wolfe"]},{name:"Akquinet",start:"Jan 26",end:null,reps:["Ariel Wolfe","Frankie Dore","Eli Johnson"]},{name:"Gaichu Managed Services",start:"Jan 26",end:null,reps:["Frankie Dore","Eli Johnson"]},{name:"Validato",start:"Jan 26",end:null,reps:["Ariel Wolfe"]},{name:"Next Ray",start:"Feb 26",end:null,reps:["Frankie Dore"]},{name:"PostProcess",start:"Mar 26",end:null,reps:["Frankie Dore","Ariel Wolfe"]},{name:"HYCU Inc",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Frankie Dore","Jesse Shorr"]},{name:"Connetra",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Bosch Mobility",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Cesar Garcia","Stephanie Hackert"]},{name:"Common Wealth Electric",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Russel"]},{name:"Hekima",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Alli Fowler","Tim Lan"]}]},
-{name:"David Harris",perf:[{m:"Aug 25",mql:21.9,sql:7.4,mtg:3.5},{m:"Sep 25",mql:20.3,sql:7.5,mtg:3.5},{m:"Oct 25",mql:18,sql:6.6,mtg:2.1},{m:"Nov 25",mql:23.2,sql:7.2,mtg:3.23},{m:"Dec 25",mql:20.7,sql:6.3,mtg:4.8},{m:"Jan 26",mql:19.8,sql:9,mtg:0.8},{m:"Feb 26",mql:14.3,sql:4.3,mtg:2.5},{m:"Mar 26",mql:21.6,sql:6.1,mtg:2.2}],reps:["Bill O'Leary","Alyssa Perez","Stephanie Hackert","Logan Kennedy","Harjit Sawhney","Daniel Davies","Alli Fowler","Jay Jones","Korbin Kirk","Tim Lan","Anand Pandey","Cesar Garcia","Jesse Shorr","Savannah Peck"],accounts:[{name:"Website Closers",start:"Jul 25",end:null,reps:["Bill O'Leary","Alyssa Perez"]},{name:"Dynamic PMO",start:"Aug 25",end:"Mar 26",reason:"Budget Issue",reps:["Harjit Sawhney","Daniel Davies"]},{name:"Blue Penguin",start:"Sep 25",end:null,reps:["Alli Fowler","Dominic Libertoski","Anthony Allen","Savannah Peck"]},{name:"Winegard",start:"Nov 25",end:null,reps:["Bill O'Leary","Dominic Libertoski"]},{name:"MTechZilla",start:"Dec 25",end:"Mar 26",reason:"Budget Issue",reps:["Cesar Garcia"]},{name:"FrontLine",start:"Feb 26",end:null,reps:["Stephanie Hackert","Logan Kennedy"]},{name:"Index Engines",start:"Feb 26",end:null,reps:["Alli Fowler","Jay Jones","Kellee Madonia"]},{name:"Inmar",start:"Mar 26",end:null,reps:["Harjit Sawhney"]},{name:"Supercharge",start:"Mar 26",end:null,reps:["Tim Lan","Korbin Kirk"]},{name:"Operto",start:"Mar 26",end:null,reps:["Jesse Shorr","Savannah Peck","Logan Kennedy"]},{name:"Metaproject",start:"Mar 26",end:null,reps:["Anand Pandey"]},{name:"Novahaus",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Alli Fowler","Logan Kennedy"]},{name:"Campus Ivy",start:"Jan 26",end:"Mar 26",reason:"Budget Issue",reps:["Edgar Medina","Savannah Peck","Alli Fowler"]},{name:"ISG One",start:"Jan 26",end:"Mar 26",reason:"Budget Issue",reps:["Joshua Crawford"]},{name:"Jellyfish",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:["Jesse Shorr","Rebecca Barnes"]}]},
-{name:"Merv Charles",perf:[{m:"Mar 25",mql:3,sql:1},{m:"Apr 25",mql:19,sql:5},{m:"May 25",mql:21.8,sql:6.4},{m:"Jun 25",mql:16.8,sql:4},{m:"Jul 25",mql:21.7,sql:6.4},{m:"Aug 25",mql:34.4,sql:10.4,mtg:1.9},{m:"Sep 25",mql:43.2,sql:13.7,mtg:1.4},{m:"Oct 25",mql:38.7,sql:13.2,mtg:6.2},{m:"Nov 25",mql:29.5,sql:7.2,mtg:3.3},{m:"Dec 25",mql:27,sql:6.7,mtg:1.7},{m:"Jan 26",mql:28,sql:5.8,mtg:2.7},{m:"Feb 26",mql:25.6,sql:6.4,mtg:2.7},{m:"Mar 26",mql:16.6,sql:3,mtg:1.2}],reps:["Michele Harris","Derek Sindelman","Daniel Davies","Joshua Bylsma","Jesse Shorr","Korbin Kirk","Angela Hamilton","Harjit Sawhney","Bill O'Leary","Alyssa Perez","Anand Pandey","Jay Jones","Savannah Peck","Tim Lan"],accounts:[{name:"IDEMIA",start:"Jun 25",end:null,reps:["Michele Harris","Derek Sindelman"]},{name:"Noratel",start:"Oct 25",end:null,reps:["Daniel Davies"]},{name:"Pocket-E",start:"Nov 25",end:null,reps:["Joshua Bylsma"]},{name:"Upstream - Matter of Voice",start:"Nov 25",end:null,reps:["Jesse Shorr","Korbin Kirk"]},{name:"The Saros Group",start:"Jan 26",end:null,reps:["Angela Hamilton","Harjit Sawhney","Bill O'Leary"]},{name:"Janek",start:"Feb 26",end:null,reps:["Angela Hamilton"]},{name:"Blank Label",start:"Mar 26",end:null,reps:["Alyssa Perez"]},{name:"Corban OneSource",start:"Mar 26",end:null,reps:["Anand Pandey","Jay Jones"]},{name:"Mash Matrix",start:"Jan 26",end:null,reps:["Bill O'Leary","Harjit Sawhney","Savannah Peck"]},{name:"Integrated Security Solutions",start:"Mar 26",end:null,reps:["Tim Lan","Korbin Kirk"]},{name:"Kelowna Software",start:"Mar 26",end:null,reps:["Alyssa Perez"]},{name:"Reten",start:"Dec 25",end:"Feb 26",reason:"Budget Issue",reps:["Paige Givinsky","Savannah Peck"]},{name:"Fenix",start:"Nov 25",end:"Mar 26",reason:"Budget Issue",reps:["Anand Pandey"]},{name:"ICUC",start:"Nov 25",end:"Dec 25",reason:"Budget Issue",reps:[]},{name:"Garantir",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:[]},{name:"WRK",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]}]},
-{name:"Paige Givinsky",perf:[{m:"Jul 25",mql:8,sql:2},{m:"Aug 25",mql:10,sql:3},{m:"Sep 25",mql:8,sql:2,mtg:1},{m:"Oct 25",mql:9,sql:2,mtg:1},{m:"Nov 25",mql:8,sql:2,mtg:1},{m:"Dec 25",mql:10,sql:3,mtg:1},{m:"Jan 26",mql:9,sql:3,mtg:1},{m:"Feb 26",mql:10,sql:3,mtg:1},{m:"Mar 26",mql:10,sql:3,mtg:1}],reps:["Paige Givinsky"],accounts:[{name:"Covenant Security LLC",start:"Jul 25",end:null,reps:["Paige Givinsky"]},{name:"Nestell & Associates",start:"Aug 25",end:null,reps:["Paige Givinsky"]},{name:"Associates International",start:"Oct 25",end:null,reps:["Paige Givinsky"]},{name:"Asset Re-Source",start:"Oct 25",end:null,reps:["Paige Givinsky"]},{name:"Global Supply Chain Logistics",start:"Dec 25",end:null,reps:["Paige Givinsky"]},{name:"Nordex Global",start:"Jan 26",end:null,reps:["Paige Givinsky"]},{name:"SME",start:"Jan 26",end:null,reps:["Paige Givinsky"]},{name:"Trifork Products",start:"Jan 26",end:null,reps:["Paige Givinsky"]},{name:"OneCore Media",start:"Feb 26",end:null,reps:["Paige Givinsky"]}]},
-{name:"Haset Aklilu (VP)",perf:[],reps:["Various"],accounts:[{name:"GEA Group",start:"Jan 24",end:null,reps:["Various"]},{name:"JPM Chase",start:"Jan 24",end:null,reps:["Various"]}]},
-{name:"No SOM Account",perf:[],reps:[],accounts:[{name:"ApplyHere",start:"Jan 26",end:null,reps:["Alli Fowler"]},{name:"Digital Seniority",start:"Feb 26",end:null,reps:["Tim Lan"]},{name:"Validato (NSA)",start:"Jan 26",end:null,reps:["Ariel Wolfe"]},{name:"Socket Labs",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Precision Motion Health",start:"Oct 25",end:"Feb 26",reason:"Budget Issue",reps:["Jesse Shorr"]},{name:"Schill Insurance",start:"Dec 25",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Alpha BPO",start:"Dec 25",end:"Mar 26",reason:"Lack of Results",reps:["Eric Tuttle","Anand Pandey"]},{name:"EDGE / EdgeScore",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Tim Lan","Cesar Garcia"]},{name:"ivalua",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Frankie Dore"]},{name:"Virtual Fudge",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Harjit Sawhney","Angela Hamilton"]},{name:"Blue Box",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Joshua Bylsma"]},{name:"Skybridge",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Alli Fowler","Joshua Crawford","Angela Hamilton","Tim Lan","Alyssa Perez"]},{name:"Ovaro",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Joshua Bylsma"]}]}
-];
-const ALL_REPS=["Anand Pandey","Angela Hamilton","Ariel Wolfe","Bill O'Leary","Blake Peremel","Cesar Garcia","Clara Galetti","Daniel Davies","Derek Sindelman","Dominic Libertoski","Edgar Medina","Eli Johnson","Eric Tuttle","Frankie Dore","Harjit Sawhney","Jay Jones","Jesse Shorr","Johan Vrey","Joshua Bylsma","Joshua Crawford","Kellee Madonia","Korbin Kirk","Logan Kennedy","Luis Rodriguez","Mark Kreidler","Michele Harris","Paige Givinsky","Rebecca Barnes","Savannah Peck","Stephanie Hackert","Tim Lan","Alli Fowler","Alyssa Perez","Anthony Allen"];
+const companyData=RAW.map((r,i)=>{
+  let churnRate=null;
+  if(i>=3){const avg3=(RAW[i-1].ac+RAW[i-2].ac+RAW[i-3].ac)/3;churnRate=avg3>0?parseFloat((r.cl/avg3*100).toFixed(2)):0;}
+  return{...r,net:r.dc-r.cl,churnRate};
+});
 
-function getRepAccounts(rn){const a=[];SOMS.forEach(s=>{s.accounts.forEach(ac=>{if(ac.reps&&ac.reps.includes(rn))a.push({...ac,som:s.name});});});return a;}
-function personMonthly(accs){return ALL_M.map(m=>{const mi=mIdx(m);let ac=0,cl=0;accs.forEach(a=>{const s=mIdx(a.start),e=a.end?mIdx(a.end):Infinity;if(s<=mi){if(!a.end)ac++;else if(e===mi)cl++;else if(e>mi)ac++;}});return{m,ac,cl};}).filter(d=>d.ac>0||d.cl>0);}
-function personCR(accs){return withCR(personMonthly(accs)).filter(d=>d.cr!==null&&d.ac>0);}
+const accountsData={
+  "Harjit Sawhney":[5,4,8,10,11,11,7,8,11,11,6,null],
+  "Eric Tuttle":[6,6,6,5,4,8,10,9,7,1,1,null],
+  "Rebecca Barnes":[5,4,4,4,5,5,4,6,5,4,1,1],
+  "Ariel Wolfe":[8,4,4,5,8,7,9,11,9,9,5,6],
+  "Michele Harris":[2,2,2,2,2,2,2,1,1,3,3,3],
+  "Paige Givinsky":[6,6,6,6,7,7,5,8,8,9,6,5],
+  "Francois Dore":[10,5,4,8,8,7,8,8,7,4,3,null],
+  "Jesse Shorr":[7,6,7,9,9,8,10,11,8,10,8,null],
+  "Stephanie Hackert":[6,2,2,2,1,2,2,3,5,5,6,6],
+  "Alli Fowler":[8,8,9,9,9,9,9,10,8,6,1,null],
+  "Tim Lan":[7,12,9,8,7,5,4,3,null,null,null,null],
+  "Daniel Davies":[2,2,1,1,4,4,4,5,3,4,1,null],
+  "Dominic Libertoski":[7,5,5,4,3,1,1,null,null,null,null,null],
+  "Savannah Peck":[6,4,4,5,6,1,1,null,null,null,null,null],
+  "Logan Kennedy":[3,5,5,5,6,3,3,1,null,null,null,null],
+  "Blake Peremel":[8,7,5,4,1,null,null,null,null,null,null,null],
+  "Joshua Crawford":[6,5,5,3,3,1,null,null,null,null,null,null],
+  "Alyssa Perez":[3,3,3,null,null,null,null,null,null,null,null,null],
+  "Derek Sindelman":[4,2,2,2,4,5,5,5,6,9,8,9],
+  "Anthony Allen":[1,4,4,4,6,2,3,null,null,null,null,null],
+  "Cesar Garcia":[8,5,6,7,9,8,5,5,7,10,9,9],
+  "Bill OLeary":[10,5,8,9,6,4,7,6,8,10,9,null],
+  "Joshua Bylsma":[5,5,2,5,6,10,11,8,8,9,10,8],
+  "Anand Pandey":[10,9,7,5,5,4,4,3,6,8,11,11],
+  "Kellee Madonia":[5,3,2,1,2,2,1,4,5,2,1,null],
+  "Elisha Johnson":[1,1,1,null,null,null,null,null,null,null,null,null],
+  "Mark Kreidler":[1,1,1,null,null,null,null,null,null,null,null,null],
+  "Korbin Kirk":[2,3,2,null,null,null,null,null,null,null,null,null],
+  "Javion Jones":[8,8,8,null,null,null,null,null,null,null,null,null],
+  "Edgar Medina":[1,null,null,null,null,null,null,null,null,null,null,null]
+};
 
-// ── CHART HELPERS ──
-let charts={};
-function makeChart(id,cfg){if(charts[id]){charts[id].destroy();}const ctx=document.getElementById(id);if(!ctx)return;charts[id]=new Chart(ctx,cfg);}
+const somData={"Angela Hamilton":[13,12,14,12,14,12,14,17,17,14,16,15]};
+const accountMonths=["Apr 25","May 25","Jun 25","Jul 25","Aug 25","Sep 25","Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26"];
 
-function statHTML(label,value,color,sub){
-  return `<div class="stat"><div class="stat-bar" style="background:${color||'#5aab1f'}"></div><div class="stat-label">${label}</div><div class="stat-value" style="color:${color||'#0d0d0d'}">${value!=null?value:'-'}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
-}
-function pillHTML(label,color){return `<span class="pill" style="background:${color}15;color:${color};border:1px solid ${color}35">${label}</span>`;}
+const churnWeights={"Rep Issue":8,"Sales Ops Issue":7,"Lack of Results":5,"No Closed Deals":5,"Single Rep":4,"No Show":4,"Poor List":3,"Slow Start":3,"Left Early":2,"Budget":1};
 
-function accountTableHTML(accounts){
-  const sorted=[...accounts].sort((a,b)=>a.end?1:-1);
-  let h='<div class="card"><div class="section-label">Account Detail \u2014 '+accounts.length+' accounts</div><div style="overflow-x:auto"><table><thead><tr><th>Account</th><th>Start</th><th>Status</th><th>Reason</th><th>Reps</th></tr></thead><tbody>';
-  sorted.forEach((a,i)=>{
-    h+=`<tr><td style="font-weight:500">${a.name}</td><td class="muted" style="font-size:11px">${a.start}</td><td>${a.end?pillHTML('Churned '+a.end,'#ef4444'):pillHTML('Active','#5aab1f')}</td><td>${a.reason?pillHTML(a.reason,rsnCol(a.reason)):'<span class="muted">\u2014</span>'}</td><td class="muted" style="font-size:11px">${a.reps?a.reps.join(', '):'\u2014'}</td></tr>`;
+const churnReasons={
+  "Harjit Sawhney":{"Lack of Results":2,"Budget":1,"Rep Issue":1},
+  "Eric Tuttle":{"Budget":2,"Lack of Results":1},
+  "Rebecca Barnes":{"Single Rep":1,"Budget":1,"Lack of Results":1},
+  "Ariel Wolfe":{"Slow Start":1,"Budget":1},
+  "Michele Harris":{"No Closed Deals":1},
+  "Paige Givinsky":{"Lack of Results":1,"Left Early":1},
+  "Francois Dore":{"Budget":1,"Lack of Results":1},
+  "Jesse Shorr":{"Rep Issue":1,"Lack of Results":1},
+  "Stephanie Hackert":{"Poor List":1,"Budget":1,"No Show":1},
+  "Alli Fowler":{"Lack of Results":2,"Budget":1,"Single Rep":1},
+  "Tim Lan":{"Lack of Results":1,"No Closed Deals":1},
+  "Daniel Davies":{"Rep Issue":1,"Budget":1},
+  "Dominic Libertoski":{"Budget":1},
+  "Savannah Peck":{"Lack of Results":1,"Left Early":1},
+  "Logan Kennedy":{"Budget":1,"Slow Start":1},
+  "Blake Peremel":{"Lack of Results":1},
+  "Joshua Crawford":{"No Closed Deals":1,"Budget":1},
+  "Alyssa Perez":{"Budget":1},
+  "Derek Sindelman":{"Rep Issue":2,"Lack of Results":1,"Sales Ops Issue":1},
+  "Anthony Allen":{"No Show":1,"Left Early":1},
+  "Cesar Garcia":{"Lack of Results":1,"Budget":1},
+  "Bill OLeary":{"Rep Issue":1,"Lack of Results":1,"Budget":1},
+  "Joshua Bylsma":{"Budget":1,"Slow Start":1},
+  "Anand Pandey":{"Lack of Results":1,"Single Rep":1},
+  "Kellee Madonia":{"No Show":1,"Budget":1},
+  "Elisha Johnson":{},"Mark Kreidler":{},"Korbin Kirk":{},"Javion Jones":{},"Edgar Medina":{}
+};
+
+function computeSDRMetrics(){
+  return Object.keys(accountsData).map(name=>{
+    const accts=accountsData[name];
+    const activeMonths=accts.filter(v=>v!==null&&v>0).length;
+    const totalMonths=accts.filter(v=>v!==null).length;
+    const currentAccounts=accts[accts.length-1];
+    const isActive=currentAccounts!==null&&currentAccounts>0;
+    let firstActive=-1,lastActive=-1;
+    for(let i=0;i<accts.length;i++){if(accts[i]!==null&&accts[i]>0){if(firstActive===-1)firstActive=i;lastActive=i;}}
+    const tenure=lastActive>=0&&firstActive>=0?lastActive-firstActive+1:0;
+    const peak=Math.max(...accts.filter(v=>v!==null));
+    const retentionScore=totalMonths>0?Math.round(activeMonths/totalMonths*100):0;
+    const reasons=churnReasons[name]||{};
+    let churnScore=0;
+    Object.entries(reasons).forEach(([r,c])=>{churnScore+=(churnWeights[r]||0)*c;});
+    const controllable=(reasons["Rep Issue"]||0)+(reasons["Sales Ops Issue"]||0);
+    const totalChurned=Object.values(reasons).reduce((s,v)=>s+v,0);
+    const activeVals=accts.filter(v=>v!==null&&v>0);
+    let trend="stable";
+    if(activeVals.length>=3){const l=activeVals.slice(-3);if(l[2]>l[0])trend="up";else if(l[2]<l[0])trend="down";}
+    return{name,accounts:accts,currentAccounts:currentAccounts||0,isActive,activeMonths,totalMonths,tenure,peak,retentionScore,churnScore,controllable,totalChurned,reasons,trend};
+  }).sort((a,b)=>{
+    if(a.isActive&&!b.isActive)return -1;
+    if(!a.isActive&&b.isActive)return 1;
+    return b.currentAccounts-a.currentAccounts;
   });
-  h+='</tbody></table></div></div>';
-  return h;
 }
 
-function personChartsHTML(prefix,accounts,perf){
-  const crTrend=personCR(accounts);
-  const moAc=personMonthly(accounts);
-  const active=accounts.filter(a=>!a.end).length,lost=accounts.filter(a=>a.end).length,total=accounts.length;
-  const cr=total?((lost/total)*100).toFixed(1):0;
-  const latest=crTrend[crTrend.length-1];
-  const avg12=crTrend.slice(-12);
-  const avgCR=avg12.length?(avg12.reduce((s,d)=>s+d.cr,0)/avg12.length).toFixed(1):"-";
-  const cs=churnScore(accounts);
-  let h='<div class="stats">';
-  h+=statHTML('Active Accounts',active,'#3a8c0f');
-  h+=statHTML('Churned',lost,'#f87171');
-  h+=statHTML('Acct Churn Rate',cr+'%',crCol(parseFloat(cr)),'churned / total');
-  h+=statHTML('Latest Monthly CR',latest?latest.cr+'%':'-',crCol(latest?latest.cr:null),latest?latest.m:'');
-  h+=statHTML('12-Mo Avg CR',avgCR+'%','#8dc63f');
-  h+=statHTML('Churn Score',cs,cs<15?'#3a8c0f':cs<35?'#8dc63f':'#bcd97a','lower = better');
-  h+='</div>';
-  if(crTrend.length>0) h+=`<div class="card"><div class="section-label">Churn Rate Trend</div><div class="chart-wrap"><canvas id="${prefix}-cr" height="130"></canvas></div></div>`;
-  if(moAc.length>0) h+=`<div class="card"><div class="section-label">Active Accounts Trend</div><div class="chart-wrap"><canvas id="${prefix}-ac" height="100"></canvas></div></div>`;
-  if(perf&&perf.length>0) h+=`<div class="card"><div class="section-label">MQL / SQL / Meetings Trend</div><div class="chart-wrap"><canvas id="${prefix}-perf" height="130"></canvas></div></div>`;
-  h+=accountTableHTML(accounts);
-
-  setTimeout(()=>{
-    if(crTrend.length>0) makeChart(prefix+'-cr',{type:'bar',data:{labels:crTrend.map(d=>d.m),datasets:[{data:crTrend.map(d=>d.cr),backgroundColor:crTrend.map(d=>crCol(d.cr)),borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{y:{ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9}}}}}});
-    if(moAc.length>0) makeChart(prefix+'-ac',{type:'line',data:{labels:moAc.map(d=>d.m),datasets:[{data:moAc.map(d=>d.ac),borderColor:'#34d399',borderWidth:2,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}}}}});
-    if(perf&&perf.length>0) makeChart(prefix+'-perf',{type:'line',data:{labels:perf.map(d=>d.m),datasets:[{label:'MQLs',data:perf.map(d=>d.mql),borderColor:'#a78bfa',borderWidth:2,fill:false,tension:0.3,pointRadius:0},{label:'SQLs',data:perf.map(d=>d.sql),borderColor:'#38bdf8',borderWidth:2,fill:false,tension:0.3,pointRadius:0},{label:'Meetings',data:perf.map(d=>d.mtg||null),borderColor:'#34d399',borderWidth:2,fill:false,tension:0.3,pointRadius:0,spanGaps:true}]},options:{responsive:true,scales:{x:{ticks:{font:{size:9}}}}}});
-  },50);
-  return h;
+function sc(val,type){
+  if(type==="ret")return val>=70?"var(--green)":val>=50?"var(--yellow)":"var(--red)";
+  if(type==="ch")return val<=20?"var(--green)":val<=45?"var(--yellow)":"var(--red)";
+  if(type==="cr")return val<=12?"var(--green)":val<=18?"var(--yellow)":"var(--red)";
+  return"var(--text)";
 }
 
-// ── TAB RENDERING ──
-function showTab(tab){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['company','reps','soms','method'][i]===tab);});
-  const c=document.getElementById('main-content');
-  const titles={company:'Company <span>Overview</span>',reps:'Sales <span>Reps</span>',soms:'Sales <span>Ops Managers</span>',method:'Data <span>Methodology</span>'};
-  let h=`<div class="page-title">${titles[tab]}</div><div class="title-bar"></div>`;
-  if(tab==='company') h+=renderCompany();
-  else if(tab==='reps') h+=renderReps();
-  else if(tab==='soms') h+=renderSOMs();
-  else if(tab==='method') h+=renderMethod();
-  c.innerHTML=h;
-  if(tab==='company') initCompanyCharts();
+const Card=({children,style,className,...p})=>React.createElement("div",{className:`fade-up ${className||""}`,style:{background:"var(--card)",border:"1px solid var(--border)",borderRadius:"var(--radius)",padding:20,boxShadow:"var(--glow)",...style},...p},children);
+const Lbl=({children,style})=>React.createElement("div",{style:{fontSize:10,letterSpacing:2.5,color:"var(--text3)",fontWeight:600,textTransform:"uppercase",marginBottom:8,...style}},children);
+const Big=({v,c,style})=>React.createElement("div",{className:"mono",style:{fontSize:28,fontWeight:700,color:c||"var(--text)",lineHeight:1,...style}},v);
+
+const Tip=({active,payload,label})=>{
+  if(!active||!payload||!payload.length)return null;
+  return React.createElement("div",{style:{background:"#12122e",border:"1px solid var(--border2)",borderRadius:8,padding:"10px 14px",fontSize:12,boxShadow:"0 8px 32px rgba(0,0,0,.4)"}},
+    React.createElement("div",{style:{fontWeight:700,color:"var(--text)",marginBottom:6,fontSize:11}},label),
+    ...payload.map((p,i)=>React.createElement("div",{key:i,style:{display:"flex",justifyContent:"space-between",gap:20,color:p.color||"var(--text2)",marginBottom:2}},
+      React.createElement("span",null,p.name),
+      React.createElement("span",{className:"mono",style:{fontWeight:600}},typeof p.value==="number"?p.value.toLocaleString():p.value)
+    ))
+  );
+};
+
+function Dashboard(){
+  const[tab,setTab]=useState("company");
+  const[selSDR,setSelSDR]=useState(null);
+  const sdr=useMemo(()=>computeSDRMetrics(),[]);
+  const latest=companyData[companyData.length-1];
+  const calc=(n)=>{const s=companyData.slice(-n).filter(d=>d.churnRate!==null);return s.length?(s.reduce((a,d)=>a+d.churnRate,0)/s.length).toFixed(2):"0";};
+  const avg3=calc(3),avg6=calc(6),avg12=calc(12);
+  const tabs=[{id:"company",label:"Company"},{id:"churn",label:"Churn"},{id:"team",label:"Team"},{id:"sdr",label:"SDR Drill-Down"}];
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-end",marginBottom:28,paddingBottom:20,borderBottom:"1px solid var(--border)"}},
+      React.createElement("div",null,
+        React.createElement("div",{style:{display:"flex",alignItems:"center",gap:10,marginBottom:6}},
+          React.createElement("div",{style:{width:8,height:8,borderRadius:"50%",background:"var(--green)",boxShadow:"0 0 8px var(--green)"}}),
+          React.createElement("span",{style:{fontSize:11,letterSpacing:4,color:"var(--green)",fontWeight:700}},"MARTAL GROUP")
+        ),
+        React.createElement("h1",{style:{fontSize:28,fontWeight:800,color:"var(--text)",letterSpacing:-.5}},"Operations Dashboard"),
+        React.createElement("div",{style:{fontSize:12,color:"var(--text3)",marginTop:4,fontWeight:400}},"Data: Aug 2021 – Mar 2026 · Last updated March 2026")
+      ),
+      React.createElement("div",{style:{display:"flex",gap:3,background:"var(--bg2)",borderRadius:10,padding:3,border:"1px solid var(--border)"}},
+        ...tabs.map(t=>React.createElement("button",{key:t.id,className:`tab-btn ${tab===t.id?"tab-active":""}`,onClick:()=>{setTab(t.id);if(t.id!=="sdr")setSelSDR(null);},
+          style:{padding:"9px 18px",borderRadius:8,border:"none",background:tab===t.id?"var(--green)":"transparent",color:tab===t.id?"#000":"var(--text3)",fontSize:12,fontWeight:700,cursor:"pointer",letterSpacing:.3,whiteSpace:"nowrap"}},t.label))
+      )
+    ),
+    tab==="company"&&React.createElement(CompanyTab,{data:companyData,latest,avg3,avg6,avg12}),
+    tab==="churn"&&React.createElement(ChurnTab,{data:companyData,avg3,avg6,avg12}),
+    tab==="team"&&React.createElement(TeamTab,{sdr,onPick:n=>{setSelSDR(n);setTab("sdr");}}),
+    tab==="sdr"&&React.createElement(SDRTab,{sdr,sel:selSDR,onPick:setSelSDR})
+  );
 }
 
-function renderCompany(){
-  const r18=CD.slice(-18);const lat=CD[CD.length-1];const vCR=CD.filter(d=>d.cr!=null);
-  const a6=(vCR.slice(-6).reduce((s,d)=>s+d.cr,0)/6).toFixed(2);
-  const a12=(vCR.slice(-12).reduce((s,d)=>s+d.cr,0)/12).toFixed(2);
-  let h='<div class="stats">';
-  h+=statHTML('MRR \u2014 Mar 26',lat.mrr+'K','#5aab1f');
-  h+=statHTML('Active Clients',lat.ac,'#0d0d0d');
-  h+=statHTML('Lost This Month',lat.cl,'#ef4444');
-  h+=statHTML('Churn Rate',lat.cr+'%',crCol(lat.cr),'3-mo trailing avg');
-  h+=statHTML('6-Mo Avg',a6+'%','#8dc63f');
-  h+=statHTML('12-Mo Avg',a12+'%','#5aab1f');
-  h+=statHTML('Deals Closed',lat.dc,'#5aab1f');
-  h+=statHTML('Net Change',(lat.dc-lat.cl>=0?'+':'')+(lat.dc-lat.cl),lat.dc-lat.cl>=0?'#5aab1f':'#ef4444');
-  h+='</div>';
-  h+=`<div class="card"><div class="section-label">Churn Rate % \u2014 Lost / Avg Active (prior 3 months)</div><div class="chart-wrap"><canvas id="co-cr" height="140"></canvas></div></div>`;
-  h+=`<div class="card"><div class="section-label">MRR Trend \u2014 18 Months</div><div class="chart-wrap"><canvas id="co-mrr" height="120"></canvas></div></div>`;
-  h+=`<div class="card"><div class="section-label">Active Clients</div><div class="chart-wrap"><canvas id="co-ac" height="110"></canvas></div></div>`;
-  h+=`<div class="card"><div class="section-label">Closed vs Lost</div><div class="chart-wrap"><canvas id="co-cl" height="120"></canvas></div></div>`;
-  h+=`<div class="card"><div class="section-label">Period Comparison</div><div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap"><div style="flex:1;min-width:140"><div class="stat-label">Period A</div><select id="pA" onchange="updateComparison()">${CD.map(d=>`<option value="${d.m}"${d.m==='Mar 25'?' selected':''}>${d.m}</option>`).join('')}</select></div><div style="flex:1;min-width:140"><div class="stat-label">Period B</div><select id="pB" onchange="updateComparison()">${CD.map(d=>`<option value="${d.m}"${d.m==='Mar 26'?' selected':''}>${d.m}</option>`).join('')}</select></div></div><div id="comp-table"></div></div>`;
-  return h;
+function CompanyTab({data,latest,avg3,avg6,avg12}){
+  const recent=data.slice(-18);
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:16}},
+      ...[{l:"Active Clients",v:latest.ac,c:"var(--blue)"},{l:"Deals Closed (Mar)",v:latest.dc,c:"var(--green)"},{l:"Clients Lost (Mar)",v:latest.cl,c:"var(--red)"},{l:"Net Change (Mar)",v:latest.net>0?`+${latest.net}`:latest.net,c:latest.net>=0?"var(--green)":"var(--red)"}]
+        .map((k,i)=>React.createElement(Card,{key:i,className:`fade-up fade-up-${i+1}`,style:{textAlign:"center"}},React.createElement(Lbl,null,k.l),React.createElement(Big,{v:k.v,c:k.c})))
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}},
+      ...[{l:"3-Mo Avg Churn",v:`${avg3}%`,c:sc(parseFloat(avg3),"cr"),n:"Best in 18 months"},{l:"6-Mo Avg Churn",v:`${avg6}%`,c:sc(parseFloat(avg6),"cr")},{l:"12-Mo Avg Churn",v:`${avg12}%`,c:sc(parseFloat(avg12),"cr")}]
+        .map((k,i)=>React.createElement(Card,{key:i,style:{textAlign:"center"}},React.createElement(Lbl,null,k.l),React.createElement(Big,{v:k.v,c:k.c}),k.n&&React.createElement("div",{style:{fontSize:10,color:"var(--green)",marginTop:6,fontWeight:600}},k.n)))
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}},
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Active Clients · 18 Months"),
+        React.createElement(ResponsiveContainer,{width:"100%",height:230},
+          React.createElement(ComposedChart,{data:recent,margin:{top:10,right:10,left:-10,bottom:0}},
+            React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+            React.createElement(XAxis,{dataKey:"m",tick:{fontSize:9,fill:"var(--text3)"},interval:2}),
+            React.createElement(YAxis,{tick:{fontSize:10,fill:"var(--text3)"}}),
+            React.createElement(Tooltip,{content:React.createElement(Tip)}),
+            React.createElement(Area,{type:"monotone",dataKey:"ac",fill:"rgba(96,165,250,0.08)",stroke:"var(--blue)",strokeWidth:2,name:"Active"})
+          )
+        )
+      ),
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Deals Closed vs Clients Lost · 18 Months"),
+        React.createElement(ResponsiveContainer,{width:"100%",height:230},
+          React.createElement(BarChart,{data:recent,margin:{top:10,right:10,left:-10,bottom:0}},
+            React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+            React.createElement(XAxis,{dataKey:"m",tick:{fontSize:9,fill:"var(--text3)"},interval:2}),
+            React.createElement(YAxis,{tick:{fontSize:10,fill:"var(--text3)"}}),
+            React.createElement(Tooltip,{content:React.createElement(Tip)}),
+            React.createElement(Bar,{dataKey:"dc",name:"Closed",fill:"var(--green)",radius:[3,3,0,0],barSize:12}),
+            React.createElement(Bar,{dataKey:"cl",name:"Lost",fill:"var(--red)",radius:[3,3,0,0],barSize:12})
+          )
+        )
+      )
+    ),
+    React.createElement(Card,null,
+      React.createElement(Lbl,null,"Net Change · 18 Months"),
+      React.createElement(ResponsiveContainer,{width:"100%",height:200},
+        React.createElement(BarChart,{data:recent,margin:{top:10,right:10,left:-10,bottom:0}},
+          React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+          React.createElement(XAxis,{dataKey:"m",tick:{fontSize:9,fill:"var(--text3)"},interval:2}),
+          React.createElement(YAxis,{tick:{fontSize:10,fill:"var(--text3)"}}),
+          React.createElement(Tooltip,{content:React.createElement(Tip)}),
+          React.createElement(ReferenceLine,{y:0,stroke:"var(--text3)",strokeDasharray:"3 3"}),
+          React.createElement(Bar,{dataKey:"net",name:"Net",radius:[3,3,0,0],barSize:18},
+            ...recent.map((d,i)=>React.createElement(Cell,{key:i,fill:d.net>=0?"var(--green)":"var(--red)"})))
+        )
+      )
+    )
+  );
 }
 
-function initCompanyCharts(){
-  const r18=CD.slice(-18);const crData=r18.filter(d=>d.cr!=null);
-  makeChart('co-cr',{type:'bar',data:{labels:crData.map(d=>d.m),datasets:[{data:crData.map(d=>d.cr),backgroundColor:crData.map(d=>crCol(d.cr)),borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{y:{ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9}}}}}});
-  makeChart('co-mrr',{type:'line',data:{labels:r18.map(d=>d.m),datasets:[{data:r18.map(d=>d.mrr),borderColor:'#5aab1f',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'K'}}},scales:{y:{ticks:{callback:v=>v+'K'}},x:{ticks:{font:{size:9}}}}}});
-  makeChart('co-ac',{type:'line',data:{labels:r18.map(d=>d.m),datasets:[{data:r18.map(d=>d.ac),borderColor:'#38bdf8',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}}}}});
-  makeChart('co-cl',{type:'bar',data:{labels:r18.map(d=>d.m),datasets:[{label:'Closed',data:r18.map(d=>d.dc),backgroundColor:'#5aab1f',borderRadius:3},{label:'Lost',data:r18.map(d=>d.cl),backgroundColor:'#ef4444',borderRadius:3}]},options:{responsive:true,scales:{x:{ticks:{font:{size:9}}}}}});
-  updateComparison();
+function ChurnTab({data,avg3,avg6,avg12}){
+  const recent=data.filter(d=>d.churnRate!==null).slice(-24);
+  const rTotals={};
+  Object.values(churnReasons).forEach(r=>Object.entries(r).forEach(([k,v])=>{rTotals[k]=(rTotals[k]||0)+v;}));
+  const rChart=Object.entries(rTotals).sort((a,b)=>b[1]-a[1]).map(([name,count])=>({name,count,weight:churnWeights[name]||0,weighted:count*(churnWeights[name]||0)}));
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12,marginBottom:16}},
+      ...[{l:"3-Mo Avg",v:`${avg3}%`,c:sc(+avg3,"cr")},{l:"6-Mo Avg",v:`${avg6}%`,c:sc(+avg6,"cr")},{l:"12-Mo Avg",v:`${avg12}%`,c:sc(+avg12,"cr")}]
+        .map((k,i)=>React.createElement(Card,{key:i,style:{textAlign:"center"}},React.createElement(Lbl,null,k.l),React.createElement(Big,{v:k.v,c:k.c})))
+    ),
+    React.createElement(Card,{style:{marginBottom:16}},
+      React.createElement(Lbl,null,"Company Churn Rate Over Time"),
+      React.createElement(ResponsiveContainer,{width:"100%",height:280},
+        React.createElement(ComposedChart,{data:recent,margin:{top:10,right:10,left:-10,bottom:0}},
+          React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+          React.createElement(XAxis,{dataKey:"m",tick:{fontSize:9,fill:"var(--text3)"},interval:3}),
+          React.createElement(YAxis,{tick:{fontSize:10,fill:"var(--text3)"},domain:[0,"auto"]}),
+          React.createElement(Tooltip,{content:React.createElement(Tip)}),
+          React.createElement(ReferenceLine,{y:12,stroke:"var(--green)",strokeDasharray:"4 4"}),
+          React.createElement(Area,{type:"monotone",dataKey:"churnRate",fill:"rgba(239,68,68,0.06)",stroke:"var(--red)",strokeWidth:2,name:"Churn %"})
+        )
+      )
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}},
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Churn Reasons — Count"),
+        React.createElement(ResponsiveContainer,{width:"100%",height:280},
+          React.createElement(BarChart,{data:rChart,layout:"vertical",margin:{top:5,right:20,left:90,bottom:5}},
+            React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+            React.createElement(XAxis,{type:"number",tick:{fontSize:10,fill:"var(--text3)"}}),
+            React.createElement(YAxis,{type:"category",dataKey:"name",tick:{fontSize:10,fill:"var(--text2)"},width:88}),
+            React.createElement(Tooltip,{content:React.createElement(Tip)}),
+            React.createElement(Bar,{dataKey:"count",name:"Count",fill:"var(--orange)",radius:[0,4,4,0],barSize:16})
+          )
+        )
+      ),
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Churn Reasons — Weighted Impact"),
+        React.createElement(ResponsiveContainer,{width:"100%",height:280},
+          React.createElement(BarChart,{data:rChart,layout:"vertical",margin:{top:5,right:20,left:90,bottom:5}},
+            React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+            React.createElement(XAxis,{type:"number",tick:{fontSize:10,fill:"var(--text3)"}}),
+            React.createElement(YAxis,{type:"category",dataKey:"name",tick:{fontSize:10,fill:"var(--text2)"},width:88}),
+            React.createElement(Tooltip,{content:React.createElement(Tip)}),
+            React.createElement(Bar,{dataKey:"weighted",name:"Impact",fill:"var(--red)",radius:[0,4,4,0],barSize:16})
+          )
+        )
+      )
+    ),
+    React.createElement(Card,null,
+      React.createElement(Lbl,null,"Churn Score Weights"),
+      React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:8,marginTop:4}},
+        ...Object.entries(churnWeights).sort((a,b)=>b[1]-a[1]).map(([r,w])=>
+          React.createElement("div",{key:r,style:{background:"var(--bg2)",border:"1px solid var(--border)",borderRadius:6,padding:"5px 12px",fontSize:11}},
+            React.createElement("span",{style:{color:"var(--text2)"}},r+" "),
+            React.createElement("span",{className:"mono",style:{color:w>=7?"var(--red)":w>=4?"var(--yellow)":"var(--text3)",fontWeight:700}},w)
+          )
+        )
+      )
+    )
+  );
 }
 
-function updateComparison(){
-  const a=document.getElementById('pA').value,b=document.getElementById('pB').value;
-  const rA=CD.find(d=>d.m===a),rB=CD.find(d=>d.m===b);
-  if(!rA||!rB)return;
-  const dlt=(k)=>{if(rA[k]==null||rB[k]==null)return null;const d=rB[k]-rA[k];return{v:d,pct:((d/rA[k])*100).toFixed(1)};};
-  const rows=[{l:'MRR',k:'mrr',f:v=>v+'K',bad:false},{l:'Active Clients',k:'ac',f:v=>v,bad:false},{l:'Deals Closed',k:'dc',f:v=>v,bad:false},{l:'Contracts Lost',k:'cl',f:v=>v,bad:true},{l:'Churn %',k:'cr',f:v=>v!=null?v+'%':'\u2014',bad:true},{l:'EBITDA',k:'eb',f:v=>v+'K',bad:false}];
-  let h='<table><thead><tr><th>Metric</th><th>A</th><th>B</th><th>Delta</th></tr></thead><tbody>';
-  rows.forEach(row=>{
-    const d=dlt(row.k);const clr=d?((row.bad?(d.v<0):(d.v>0))?'#5aab1f':(row.bad?(d.v>0):(d.v<0))?'#ef4444':'#707070'):'#707070';
-    h+=`<tr><td class="muted">${row.l}</td><td>${row.f(rA[row.k])}</td><td>${row.f(rB[row.k])}</td><td style="color:${clr};font-weight:700">${d?(d.v>0?'+':'')+(typeof d.v==='number'&&!Number.isInteger(d.v)?d.v.toFixed(2):d.v)+' ('+d.pct+'%)':'\u2014'}</td></tr>`;
-  });
-  h+='</tbody></table>';
-  document.getElementById('comp-table').innerHTML=h;
+function TeamTab({sdr,onPick}){
+  const[sk,setSk]=useState("currentAccounts");
+  const[sd,setSd]=useState("desc");
+  const sorted=useMemo(()=>[...sdr].sort((a,b)=>{let av=a[sk],bv=b[sk];if(typeof av==="string")return sd==="asc"?av.localeCompare(bv):bv.localeCompare(av);return sd==="asc"?av-bv:bv-av;}),[sdr,sk,sd]);
+  const doSort=k=>{if(sk===k)setSd(d=>d==="asc"?"desc":"asc");else{setSk(k);setSd("desc");}};
+  const arrow=k=>sk===k?(sd==="asc"?" ↑":" ↓"):"";
+  const cols=[{k:"name",l:"SDR",w:155,a:"left"},{k:"currentAccounts",l:"Current",w:68},{k:"peak",l:"Peak",w:56},{k:"tenure",l:"Tenure",w:62},{k:"retentionScore",l:"Retention",w:78},{k:"churnScore",l:"Churn Sc.",w:78},{k:"controllable",l:"Ctrl.",w:56},{k:"totalChurned",l:"Lost",w:52},{k:"isActive",l:"Status",w:70}];
+  const activeCount=sdr.filter(s=>s.isActive).length;
+  const avgRet=Math.round(sdr.reduce((s,r)=>s+r.retentionScore,0)/sdr.length);
+  const avgCh=Math.round(sdr.reduce((s,r)=>s+r.churnScore,0)/sdr.length);
+  const totCtrl=sdr.reduce((s,r)=>s+r.controllable,0);
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:12,marginBottom:16}},
+      ...[{l:"Active SDRs",v:activeCount,c:"var(--green)"},{l:"Total SDRs",v:sdr.length,c:"var(--blue)"},{l:"Avg Retention",v:avgRet+"/100",c:sc(avgRet,"ret")},{l:"Avg Churn Score",v:avgCh+"/100",c:sc(avgCh,"ch")},{l:"Total Controllable",v:totCtrl,c:"var(--red)"}]
+        .map((k,i)=>React.createElement(Card,{key:i,style:{textAlign:"center"}},React.createElement(Lbl,null,k.l),React.createElement(Big,{v:k.v,c:k.c,style:{fontSize:24}})))
+    ),
+    React.createElement(Card,{style:{padding:0,overflow:"hidden"}},
+      React.createElement("div",{style:{overflowX:"auto"}},
+        React.createElement("table",{style:{width:"100%",borderCollapse:"collapse",fontSize:12}},
+          React.createElement("thead",null,
+            React.createElement("tr",{style:{borderBottom:"2px solid var(--border)"}},
+              ...cols.map(c=>React.createElement("th",{key:c.k,onClick:()=>doSort(c.k),style:{padding:"14px 10px",textAlign:c.a||"center",color:"var(--text3)",fontWeight:700,fontSize:9,letterSpacing:1.5,textTransform:"uppercase",cursor:"pointer",whiteSpace:"nowrap",minWidth:c.w,background:"var(--bg2)",position:"sticky",top:0,zIndex:1}},c.l,arrow(c.k)))
+            )
+          ),
+          React.createElement("tbody",null,
+            ...sorted.map((s,i)=>React.createElement("tr",{key:s.name,className:"team-row",onClick:()=>onPick(s.name),style:{borderBottom:"1px solid var(--border)",cursor:"pointer",background:i%2===0?"transparent":"rgba(255,255,255,0.008)"}},
+              React.createElement("td",{style:{padding:"11px 10px",fontWeight:600,color:s.isActive?"var(--text)":"var(--text3)",fontSize:12.5}},s.name),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",fontWeight:700,color:s.isActive?"var(--blue)":"var(--text3)"}},s.currentAccounts),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",color:"var(--text2)"}},s.peak),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",color:"var(--text2)"}},s.tenure+"mo"),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",fontWeight:700,color:sc(s.retentionScore,"ret")}},s.retentionScore),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",fontWeight:700,color:sc(s.churnScore,"ch")}},s.churnScore),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",color:s.controllable>0?"var(--red)":"var(--text3)",fontWeight:s.controllable>0?700:400}},s.controllable),
+              React.createElement("td",{className:"mono",style:{textAlign:"center",color:"var(--text2)"}},s.totalChurned),
+              React.createElement("td",{style:{textAlign:"center"}},
+                React.createElement("span",{style:{fontSize:10,fontWeight:600,padding:"3px 9px",borderRadius:10,background:s.isActive?"var(--green-bg)":"var(--red-bg)",color:s.isActive?"var(--green)":"var(--red)",border:`1px solid ${s.isActive?"var(--green-border)":"var(--red-border)"}`}},s.isActive?"Active":"Inactive"))
+            ))
+          )
+        )
+      )
+    ),
+    React.createElement(Card,{style:{marginTop:16}},
+      React.createElement(Lbl,null,"Sales Operations Manager"),
+      React.createElement("div",{style:{display:"flex",alignItems:"center",gap:16,marginTop:6}},
+        React.createElement("div",{style:{fontWeight:700,fontSize:14,color:"var(--purple)"}},"\u25CF Angela Hamilton"),
+        React.createElement("div",{style:{display:"flex",gap:5,flexWrap:"wrap"}},
+          ...somData["Angela Hamilton"].map((v,i)=>React.createElement("div",{key:i,style:{background:"var(--bg2)",border:"1px solid var(--border)",borderRadius:6,padding:"4px 8px",textAlign:"center",minWidth:46}},
+            React.createElement("div",{style:{fontSize:8,color:"var(--text3)",fontWeight:500}},accountMonths[i]),
+            React.createElement("div",{className:"mono",style:{fontSize:13,fontWeight:700,color:"var(--purple)"}},v)
+          ))
+        )
+      )
+    )
+  );
 }
 
-function renderSOMs(){
-  let h='<div style="margin-bottom:20px"><div class="stat-label">Select Sales Ops Manager</div><select id="som-sel" onchange="loadSOM()"><option value="">\u2014 Choose a SOM \u2014</option>';
-  SOMS.forEach(s=>{h+=`<option value="${s.name}">${s.name}</option>`;});
-  h+='</select></div><div id="som-content"><div class="placeholder">Select a SOM above to load their dashboard.</div></div>';
-  return h;
+function SDRTab({sdr,sel,onPick}){
+  const active=sdr.filter(s=>s.isActive);
+  const cur=sdr.find(s=>s.name===sel)||active[0];
+  if(!cur)return React.createElement(Card,null,React.createElement("div",{style:{color:"var(--text3)",textAlign:"center",padding:40}},"No SDR data"));
+  const chart=accountMonths.map((m,i)=>({month:m,accounts:cur.accounts[i]})).filter(d=>d.accounts!==null);
+  const rEntries=Object.entries(cur.reasons);
+
+  return React.createElement("div",null,
+    React.createElement("div",{style:{display:"flex",flexWrap:"wrap",gap:4,marginBottom:18}},
+      ...sdr.filter(s=>s.isActive).map(s=>React.createElement("button",{key:s.name,onClick:()=>onPick(s.name),
+        style:{padding:"6px 13px",borderRadius:6,border:`1px solid ${s.name===cur.name?"var(--green)":"var(--border)"}`,fontSize:11,fontWeight:600,cursor:"pointer",background:s.name===cur.name?"var(--green)":"var(--bg2)",color:s.name===cur.name?"#000":"var(--text3)",transition:"all .15s"}},s.name.split(" ")[0]))
+    ),
+    React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}},
+      React.createElement("div",null,
+        React.createElement("h2",{style:{fontSize:22,fontWeight:800,color:"var(--text)",letterSpacing:-.3}},cur.name),
+        React.createElement("div",{style:{fontSize:12,color:"var(--text3)",marginTop:3}},
+          (cur.isActive?"Active":"Inactive")+" · "+cur.tenure+" months · "+cur.currentAccounts+" accounts")
+      ),
+      React.createElement("span",{style:{fontSize:10,fontWeight:700,padding:"5px 12px",borderRadius:8,
+        background:cur.trend==="up"?"var(--green-bg)":cur.trend==="down"?"var(--red-bg)":"var(--yellow-bg)",
+        color:cur.trend==="up"?"var(--green)":cur.trend==="down"?"var(--red)":"var(--yellow)",
+        border:`1px solid ${cur.trend==="up"?"var(--green-border)":cur.trend==="down"?"var(--red-border)":"var(--yellow-border)"}`}},
+        cur.trend==="up"?"↑ Up":cur.trend==="down"?"↓ Down":"→ Stable")
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:12,marginBottom:16}},
+      ...[{l:"Retention",v:cur.retentionScore+"/100",c:sc(cur.retentionScore,"ret")},{l:"Churn Score",v:cur.churnScore+"/100",c:sc(cur.churnScore,"ch")},{l:"Peak",v:cur.peak,c:"var(--blue)"},{l:"Controllable",v:cur.controllable,c:cur.controllable>0?"var(--red)":"var(--green)"},{l:"Total Lost",v:cur.totalChurned,c:"var(--orange)"}]
+        .map((k,i)=>React.createElement(Card,{key:i,style:{textAlign:"center",padding:14}},React.createElement(Lbl,{style:{fontSize:9}},k.l),React.createElement(Big,{v:k.v,c:k.c,style:{fontSize:22}})))
+    ),
+    React.createElement("div",{style:{display:"grid",gridTemplateColumns:"2fr 1fr",gap:12}},
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Account History"),
+        React.createElement(ResponsiveContainer,{width:"100%",height:220},
+          React.createElement(ComposedChart,{data:chart,margin:{top:10,right:10,left:-10,bottom:0}},
+            React.createElement(CartesianGrid,{strokeDasharray:"3 3",stroke:"var(--border)"}),
+            React.createElement(XAxis,{dataKey:"month",tick:{fontSize:9,fill:"var(--text3)"}}),
+            React.createElement(YAxis,{tick:{fontSize:10,fill:"var(--text3)"},domain:[0,"auto"]}),
+            React.createElement(Tooltip,{content:React.createElement(Tip)}),
+            React.createElement(Area,{type:"monotone",dataKey:"accounts",fill:"rgba(96,165,250,0.08)",stroke:"var(--blue)",strokeWidth:2,name:"Accounts"})
+          )
+        )
+      ),
+      React.createElement(Card,null,
+        React.createElement(Lbl,null,"Churn Reasons"),
+        rEntries.length===0?
+          React.createElement("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",height:200,color:"var(--green)",fontSize:13,fontWeight:700}},"No churns recorded")
+        :React.createElement("div",{style:{marginTop:8}},
+          ...rEntries.sort((a,b)=>(churnWeights[b[0]]||0)*b[1]-(churnWeights[a[0]]||0)*a[1]).map(([r,c])=>{
+            const w=churnWeights[r]||0;const ctrl=r==="Rep Issue"||r==="Sales Ops Issue";
+            return React.createElement("div",{key:r,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"9px 0",borderBottom:"1px solid var(--border)"}},
+              React.createElement("div",null,
+                React.createElement("div",{style:{fontSize:12,fontWeight:600,color:ctrl?"var(--red)":"var(--text)"}},r+(ctrl?" ⚠":"")),
+                React.createElement("div",{style:{fontSize:10,color:"var(--text3)"}},"×"+c+" (weight "+w+")")
+              ),
+              React.createElement("div",{className:"mono",style:{fontSize:16,fontWeight:700,color:ctrl?"var(--red)":"var(--orange)"}},w*c)
+            );
+          }),
+          React.createElement("div",{style:{display:"flex",justifyContent:"space-between",paddingTop:12,marginTop:6}},
+            React.createElement("span",{style:{fontSize:11,fontWeight:700,color:"var(--text2)"}},"Total"),
+            React.createElement("span",{className:"mono",style:{fontSize:18,fontWeight:800,color:sc(cur.churnScore,"ch")}},cur.churnScore)
+          )
+        )
+      )
+    ),
+    React.createElement(Card,{style:{marginTop:12}},
+      React.createElement(Lbl,null,"Monthly Accounts"),
+      React.createElement("div",{style:{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}},
+        ...accountMonths.map((m,i)=>{const v=cur.accounts[i];return React.createElement("div",{key:i,style:{background:v===null?"var(--bg)":"var(--bg2)",border:`1px solid ${v===null?"var(--border)":"var(--border2)"}`,borderRadius:8,padding:"8px 12px",textAlign:"center",minWidth:58,opacity:v===null?.35:1}},
+          React.createElement("div",{style:{fontSize:8,color:"var(--text3)",marginBottom:3,fontWeight:500}},m),
+          React.createElement("div",{className:"mono",style:{fontSize:15,fontWeight:700,color:v===null?"var(--text3)":v===0?"var(--red)":"var(--blue)"}},v===null?"—":v)
+        );})
+      )
+    )
+  );
 }
 
-function loadSOM(){
-  const name=document.getElementById('som-sel').value;
-  const el=document.getElementById('som-content');
-  if(!name){el.innerHTML='<div class="placeholder">Select a SOM above to load their dashboard.</div>';return;}
-  const som=SOMS.find(s=>s.name===name);
-  let h=`<div class="som-header"><div class="som-name">${som.name}</div><div class="som-meta"><span style="color:#5aab1f;font-weight:700">${som.accounts.filter(a=>!a.end).length}</span> active accounts \u00B7 <span style="color:#ef4444;font-weight:700">${som.accounts.filter(a=>a.end).length}</span> churned</div></div>`;
-  h+=personChartsHTML('som',som.accounts,som.perf);
-  h+=`<div class="card"><div class="section-label">SEs in Portfolio</div><div class="pills-wrap">${som.reps.map(r=>pillHTML(r,'#5aab1f')).join('')}</div></div>`;
-  el.innerHTML=h;
-}
-
-function renderReps(){
-  let h='<div style="margin-bottom:20px"><div class="stat-label">Select Rep</div><select id="rep-sel" onchange="loadRep()"><option value="">\u2014 Choose a rep \u2014</option>';
-  ALL_REPS.forEach(r=>{h+=`<option value="${r}">${r}</option>`;});
-  h+='</select></div><div id="rep-content"><div class="placeholder">Select a rep above to load their dashboard.</div></div>';
-  return h;
-}
-
-function loadRep(){
-  const name=document.getElementById('rep-sel').value;
-  const el=document.getElementById('rep-content');
-  if(!name){el.innerHTML='<div class="placeholder">Select a rep above to load their dashboard.</div>';return;}
-  const accs=getRepAccounts(name);
-  const somN=[...new Set(accs.map(a=>a.som))];
-  let h=`<div class="som-header"><div class="som-name">${name}</div><div class="som-meta">Sales Execution Rep \u00B7 <span style="color:#5aab1f;font-weight:700">${accs.filter(a=>!a.end).length}</span> active accounts \u00B7 ${somN.join(', ')||'\u2014'}</div></div>`;
-  if(accs.length>0) h+=personChartsHTML('rep',accs,null);
-  else h+='<div class="card muted">No account assignments found for this rep.</div>';
-  el.innerHTML=h;
-}
-
-function renderMethod(){
-  const data=[
-    {t:"SOMs (11 listed)",i:["David Harris, David Rosenthal, Grant Paris, James Bellew, Jason Andrews, Matt Guthrie, Merv Charles, Paige Givinsky (Landbase), Venus Powers","Haset Aklilu (VP of Product) \u2014 GEA and JPM Chase assigned","No SOM Account \u2014 accounts without an assigned SOM"]},
-    {t:"Reps (34)",i:["Anand Pandey, Angela Hamilton, Ariel Wolfe, Bill O'Leary, Blake Peremel, Cesar Garcia, Clara Galetti, Daniel Davies, Derek Sindelman, Dominic Libertoski, Edgar Medina, Eli Johnson, Eric Tuttle, Frankie Dore, Harjit Sawhney, Jay Jones, Jesse Shorr, Johan Vrey, Joshua Bylsma, Joshua Crawford, Kellee Madonia, Korbin Kirk, Logan Kennedy, Luis Rodriguez, Mark Kreidler, Michele Harris, Paige Givinsky, Rebecca Barnes, Savannah Peck, Stephanie Hackert, Tim Lan, Alli Fowler, Alyssa Perez, Anthony Allen"]},
-    {t:"Churn Formula",i:["Company: Lost / Avg(Active Clients prior 3 months) x 100","Person-level: same formula applied to their account counts","Mar 2026 example: 10 / avg(106,105,101) = 9.62%"]},
-    {t:"Data Sources",i:["Cash Flow & Billings \u2014 MRR, active clients, closed, lost, EBITDA (Feb 2022\u2013Mar 2026)","Accounts Matrix \u2014 account > SOM > rep assignments with start/end dates","Cancellations List (Jan\u2013May 2026)","SOM Performance PDF \u2014 MQL/SQL/meetings per SOM (Jul 2024\u2013Mar 2026)","Termination Analysis \u2014 churn reasons per account","Org Chart \u2014 definitive role assignments"]},
-    {t:"Churn Score (lower = better)",i:["Rep Issue / Sales Ops Issue: +8 | Lack of Results / No Closed Deals: +6 | Single Rep / No Show: +5 | Poor List / Slow Start: +3 | Budget / Landbase / Didnt Pay: +1","Green 0\u201314 | Yellow 15\u201334 | Red 35+"]}
-  ];
-  return data.map(s=>`<div class="card method-block"><div class="method-title"><div class="method-icon"></div>${s.t}</div><ul class="method-list">${s.i.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('');
-}
-
-// ── INIT ──
-showTab('company');
+ReactDOM.render(React.createElement(Dashboard),document.getElementById("root"));
 </script>
 </body>
 </html>
