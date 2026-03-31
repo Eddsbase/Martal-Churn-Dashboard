@@ -5,22 +5,66 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Martal Group — Performance &amp; Churn Intelligence Dashboard</title>
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'Inter','system-ui',sans-serif; background:#e8e8e8; color:#0d0d0d; }
-  #root { min-height:100vh; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter','system-ui',sans-serif;background:#e8e8e8;color:#0d0d0d;}
+.ann{background:#f0f7e8;border-bottom:1px solid rgba(74,138,24,0.25);padding:7px 20px;text-align:center;font-size:11px;font-weight:600;letter-spacing:0.8px;color:#3a6b10;}
+.nav{background:#fff;border-bottom:1px solid #d4d4d4;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-bar{width:4px;height:24px;background:#5aab1f;border-radius:2px;}
+.logo-text{font-size:17px;font-weight:900;letter-spacing:2px;text-transform:uppercase;line-height:1;}
+.logo-sub{font-size:8px;color:#707070;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.tabs{display:flex;gap:0;}
+.tab-btn{padding:0 18px;height:52px;border:none;border-bottom:2px solid transparent;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:transparent;color:#707070;font-family:inherit;transition:color 0.15s,border-color 0.15s;}
+.tab-btn.active{color:#5aab1f;border-bottom-color:#5aab1f;}
+.content{max-width:980px;margin:0 auto;padding:28px 20px;}
+.page-title{font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:-0.5px;line-height:1.1;margin-bottom:8px;}
+.page-title span{color:#5aab1f;}
+.title-bar{width:40px;height:3px;background:#5aab1f;border-radius:2px;margin-bottom:24px;}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.stat{background:#f3f3f3;border:1px solid #d4d4d4;border-radius:6px;padding:14px 16px;flex:1;min-width:110;position:relative;overflow:hidden;}
+.stat-bar{position:absolute;top:0;left:0;width:3px;height:100%;border-radius:3px 0 0 3px;}
+.stat-label{color:#707070;font-size:9px;margin-bottom:6px;text-transform:uppercase;letter-spacing:1.2px;font-weight:700;}
+.stat-value{font-size:20px;font-weight:800;letter-spacing:-0.5px;line-height:1;}
+.stat-sub{color:#b0b0b0;font-size:9px;margin-top:4px;letter-spacing:0.3px;}
+.card{background:#fff;border:1px solid #d4d4d4;border-radius:6px;padding:16px 18px;margin-bottom:10px;}
+.section-label{color:#707070;font-size:9px;font-weight:700;margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;gap:8px;}
+.section-label::before{content:'';width:16px;height:1px;background:#5aab1f;opacity:0.6;}
+.pill{border-radius:3px;padding:2px 8px;font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;display:inline-block;}
+.chart-wrap{position:relative;width:100%;margin-bottom:4px;}
+select{width:100%;background:#f3f3f3;color:#0d0d0d;border:1px solid #bebebe;border-radius:4px;padding:9px 14px;font-size:14px;font-family:inherit;outline:none;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{padding:6px 10px;text-align:left;color:#707070;font-weight:700;font-size:9px;letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid #bebebe;}
+td{padding:7px 10px;border-bottom:1px solid #d4d4d4;}
+tr:nth-child(even){background:#ebebeb;}
+.muted{color:#707070;}
+.som-header{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid #d4d4d4;}
+.som-name{font-size:20px;font-weight:800;letter-spacing:-0.5px;}
+.som-meta{color:#707070;font-size:11px;margin-top:4px;}
+.method-block{margin-bottom:10px;}
+.method-title{color:#5aab1f;font-weight:800;font-size:11px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;gap:8px;}
+.method-icon{width:12px;height:12px;background:#5aab1f;border-radius:2px;flex-shrink:0;}
+.method-list{margin:0;padding:0 0 0 20px;}
+.method-list li{margin-bottom:5px;color:#707070;font-size:12px;line-height:1.7;}
+.placeholder{color:#b0b0b0;font-size:13px;padding:48px 0;text-align:center;}
+.pills-wrap{display:flex;flex-wrap:wrap;gap:5px;}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-<script src="https://unpkg.com/recharts@2.12.7/umd/Recharts.min.js"></script>
 </head>
 <body>
-<div id="root"></div>
-<script type="text/babel">
-const {useState,useMemo}=React;
-const {LineChart,Line,BarChart,Bar,Cell,XAxis,YAxis,CartesianGrid,Tooltip,Legend,ResponsiveContainer}=Recharts;
+<div class="ann">PERFORMANCE &amp; CHURN INTELLIGENCE DASHBOARD · MARCH 2026 · INTERNAL USE ONLY</div>
+<div class="nav">
+  <div class="logo"><div class="logo-bar"></div><div><div class="logo-text">MARTAL GROUP</div><div class="logo-sub">B2B Lead Generation Agency</div></div></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('company')">Company</button>
+    <button class="tab-btn" onclick="showTab('reps')">Sales Reps</button>
+    <button class="tab-btn" onclick="showTab('soms')">Sales Ops</button>
+    <button class="tab-btn" onclick="showTab('method')">Methodology</button>
+  </div>
+</div>
+<div class="content" id="main-content"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ── DATA ──
 const RAW=[
 {m:"Feb 22",mrr:585,ac:82,dc:12,cl:19,eb:193},{m:"Mar 22",mrr:573,ac:81,dc:17,cl:15,eb:137},
 {m:"Apr 22",mrr:604,ac:87,dc:17,cl:15,eb:103},{m:"May 22",mrr:644,ac:87,dc:19,cl:19,eb:103},
@@ -48,28 +92,15 @@ const RAW=[
 {m:"Dec 25",mrr:721,ac:101,dc:23,cl:15,eb:137},{m:"Jan 26",mrr:815,ac:105,dc:22,cl:15,eb:130},
 {m:"Feb 26",mrr:644,ac:106,dc:23,cl:17,eb:64},{m:"Mar 26",mrr:726,ac:113,dc:12,cl:10,eb:0}
 ];
-
 const MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const mIdx=(m)=>{const p=m.split(" ");return parseInt(p[1])*12+MO.indexOf(p[0]);};
-const withCR=(arr)=>arr.map((d,i)=>{if(i<3)return{...d,cr:null};const avg=(arr[i-1].ac+arr[i-2].ac+arr[i-3].ac)/3;return{...d,cr:parseFloat(((d.cl/avg)*100).toFixed(2))};});
+const mIdx=m=>{const p=m.split(" ");return parseInt(p[1])*12+MO.indexOf(p[0]);};
+const withCR=arr=>arr.map((d,i)=>{if(i<3)return{...d,cr:null};const avg=(arr[i-1].ac+arr[i-2].ac+arr[i-3].ac)/3;return{...d,cr:parseFloat(((d.cl/avg)*100).toFixed(2))};});
 const CD=withCR(RAW);
 const ALL_M=CD.map(d=>d.m);
-
 const PEN={"Rep Issue":8,"Sales Ops Issue":8,"Lack of Results":6,"No Closed Deals":6,"Single Rep Account":5,"No Show Issue":5,"Poor List Quality":3,"Slow Start":3,"Budget Issue":1,"Didnt Pay":1,"Accepted Landbase":1,"Leadership Intervention":2};
-const G="#5aab1f",GD="#4a8a18",AN="#f0f7e8",BGC="#e8e8e8",CW="#ffffff",C2="#f3f3f3",C3="#ebebeb",BD="#d4d4d4",B2="#bebebe",TX="#0d0d0d",MU="#707070",M2="#b0b0b0",FN="'Inter','system-ui',sans-serif";
-const DOT=" \u00B7 ";
-const crCol=(v)=>v==null?MU:v<10?"#3a8c0f":v<15?"#f5c518":v<20?"#f97316":"#dc2626";
-const rsnCol=(r)=>{if(!r)return MU;if(["Rep Issue","Sales Ops Issue"].includes(r))return"#dc2626";if(["Lack of Results","No Closed Deals","No Show Issue","Single Rep Account"].includes(r))return"#ea580c";if(["Poor List Quality","Slow Start"].includes(r))return"#ca8a04";return G;};
-const churnScore=(accs)=>Math.min(100,Math.round(accs.filter(a=>a.end).reduce((s,a)=>s+(PEN[a.reason]||1),0)));
-const TT={contentStyle:{background:"#fff",border:"1px solid "+B2,borderRadius:4,color:TX,fontFamily:FN,fontSize:12,boxShadow:"0 2px 8px rgba(0,0,0,0.1)"}};
-const CS={background:CW,border:"1px solid "+BD,borderRadius:6,padding:"16px 18px",marginBottom:10};
-
-function Pill({label,color}){return <span style={{background:color+"15",color,border:"1px solid "+color+"35",borderRadius:3,padding:"2px 8px",fontSize:10,fontWeight:700,letterSpacing:"0.4px",fontFamily:FN,textTransform:"uppercase"}}>{label}</span>;}
-function Stat({label,value,color,sub}){return <div style={{background:C2,border:"1px solid "+BD,borderRadius:6,padding:"14px 16px",flex:1,minWidth:110,position:"relative",overflow:"hidden"}}><div style={{position:"absolute",top:0,left:0,width:3,height:"100%",background:color||G,borderRadius:"3px 0 0 3px"}}/><div style={{color:MU,fontSize:9,marginBottom:6,textTransform:"uppercase",letterSpacing:"1.2px",fontWeight:700,fontFamily:FN}}>{label}</div><div style={{color:color||TX,fontSize:20,fontWeight:800,letterSpacing:"-0.5px",lineHeight:1,fontFamily:FN}}>{value!=null?value:"-"}</div>{sub&&<div style={{color:M2,fontSize:9,marginTop:4,fontFamily:FN,letterSpacing:"0.3px"}}>{sub}</div>}</div>;}
-function SL({children}){return <div style={{color:MU,fontSize:9,fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:"1.5px",fontFamily:FN,display:"flex",alignItems:"center",gap:8}}><div style={{width:16,height:1,background:G,opacity:0.6}}/>{children}</div>;}
-
-function personMonthly(accs){return ALL_M.map(m=>{const mi=mIdx(m);let ac=0,cl=0;accs.forEach(a=>{const s=mIdx(a.start),e=a.end?mIdx(a.end):Infinity;if(s<=mi){if(!a.end)ac++;else if(e===mi)cl++;else if(e>mi)ac++;}});return{m,ac,cl};}).filter(d=>d.ac>0||d.cl>0);}
-function personCR(accs){return withCR(personMonthly(accs)).filter(d=>d.cr!==null&&d.ac>0);}
+const crCol=v=>v==null?"#707070":v<10?"#3a8c0f":v<15?"#f5c518":v<20?"#f97316":"#dc2626";
+const rsnCol=r=>{if(!r)return"#707070";if(["Rep Issue","Sales Ops Issue"].includes(r))return"#dc2626";if(["Lack of Results","No Closed Deals","No Show Issue","Single Rep Account"].includes(r))return"#ea580c";if(["Poor List Quality","Slow Start"].includes(r))return"#ca8a04";return"#5aab1f";};
+const churnScore=accs=>Math.min(100,Math.round(accs.filter(a=>a.end).reduce((s,a)=>s+(PEN[a.reason]||1),0)));
 
 const SOMS=[
 {name:"David Rosenthal",perf:[{m:"Jul 24",mql:14.2,sql:2},{m:"Aug 24",mql:29.8,sql:4},{m:"Sep 24",mql:16.9,sql:2.3},{m:"Oct 24",mql:18.3,sql:3.4},{m:"Nov 24",mql:19.7,sql:3.9},{m:"Dec 24",mql:15.3,sql:3},{m:"Jan 25",mql:22.1,sql:3.5},{m:"Feb 25",mql:25.2,sql:4.3},{m:"Mar 25",mql:28.6,sql:5.1},{m:"Apr 25",mql:30.1,sql:3.9},{m:"May 25",mql:22.6,sql:3.25},{m:"Jun 25",mql:19.3,sql:3.8},{m:"Jul 25",mql:22.8,sql:4.5},{m:"Aug 25",mql:16.7,sql:4,mtg:3.15},{m:"Sep 25",mql:14.5,sql:5.1,mtg:3.6},{m:"Oct 25",mql:18.5,sql:5.6,mtg:2.1},{m:"Nov 25",mql:20.7,sql:6.2,mtg:2.2},{m:"Dec 25",mql:13.1,sql:4.9,mtg:1.9},{m:"Jan 26",mql:9.8,sql:2.7,mtg:2},{m:"Feb 26",mql:16.2,sql:5.3,mtg:2.1},{m:"Mar 26",mql:16.2,sql:6.3,mtg:2.3}],reps:["Frankie Dore","Blake Peremel","Eric Tuttle","Ariel Wolfe","Dominic Libertoski","Paige Givinsky","Joshua Bylsma","Kellee Madonia","Bill O'Leary","Alyssa Perez","Jay Jones","Angela Hamilton","Harjit Sawhney","Mark Kreidler","Cesar Garcia","Joshua Crawford"],accounts:[{name:"Aixigo",start:"Aug 23",end:null,reps:["Frankie Dore"]},{name:"Sentinel",start:"Jan 25",end:null,reps:["Harjit Sawhney","Eric Tuttle","Mark Kreidler"]},{name:"Securance Consulting",start:"Jul 25",end:null,reps:["Blake Peremel","Eric Tuttle"]},{name:"Pentaho - Hitachi",start:"Aug 25",end:null,reps:["Ariel Wolfe","Blake Peremel"]},{name:"Varya Virtual",start:"Dec 25",end:null,reps:["Paige Givinsky","Joshua Bylsma"]},{name:"Focus Bankers",start:"Dec 25",end:null,reps:["Ariel Wolfe","Dominic Libertoski"]},{name:"TigerPak",start:"Jan 26",end:null,reps:["Frankie Dore"]},{name:"WRS Health",start:"Jan 26",end:null,reps:["Angela Hamilton"]},{name:"Elevation Services",start:"Jan 26",end:null,reps:["Frankie Dore","Bill O'Leary"]},{name:"MyMethod AI",start:"Jan 26",end:null,reps:["Kellee Madonia","Bill O'Leary"]},{name:"InteradCorp",start:"Feb 26",end:null,reps:["Alyssa Perez","Jay Jones"]},{name:"Pro Purchaser",start:"Mar 26",end:null,reps:["Bill O'Leary","Jay Jones"]},{name:"SFC",start:"Mar 26",end:null,reps:["Joshua Bylsma"]},{name:"Truelty",start:"Mar 26",end:null,reps:["Cesar Garcia","Joshua Crawford"]},{name:"Infolink Tax",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:["Blake Peremel"]},{name:"Nava Software",start:"Dec 25",end:"Dec 25",reason:"Budget Issue",reps:["Eric Tuttle","Anand Pandey"]},{name:"One River",start:"Jan 25",end:"Feb 26",reason:"Budget Issue",reps:["Eric Tuttle"]},{name:"WRS Health (churned)",start:"Jan 26",end:"Apr 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"JumpCloud",start:"Jan 25",end:"Mar 26",reason:"Lack of Results",reps:["Eric Tuttle"]},{name:"Focus Bankers (churned)",start:"Dec 25",end:"May 26",reason:"Budget Issue",reps:["Ariel Wolfe","Dominic Libertoski"]}]},
@@ -84,111 +115,171 @@ const SOMS=[
 {name:"Haset Aklilu (VP)",perf:[],reps:["Various"],accounts:[{name:"GEA Group",start:"Jan 24",end:null,reps:["Various"]},{name:"JPM Chase",start:"Jan 24",end:null,reps:["Various"]}]},
 {name:"No SOM Account",perf:[],reps:[],accounts:[{name:"ApplyHere",start:"Jan 26",end:null,reps:["Alli Fowler"]},{name:"Digital Seniority",start:"Feb 26",end:null,reps:["Tim Lan"]},{name:"Validato (NSA)",start:"Jan 26",end:null,reps:["Ariel Wolfe"]},{name:"Socket Labs",start:"Nov 25",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Precision Motion Health",start:"Oct 25",end:"Feb 26",reason:"Budget Issue",reps:["Jesse Shorr"]},{name:"Schill Insurance",start:"Dec 25",end:"Feb 26",reason:"Budget Issue",reps:["Angela Hamilton"]},{name:"Alpha BPO",start:"Dec 25",end:"Mar 26",reason:"Lack of Results",reps:["Eric Tuttle","Anand Pandey"]},{name:"EDGE / EdgeScore",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Tim Lan","Cesar Garcia"]},{name:"ivalua",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Frankie Dore"]},{name:"Virtual Fudge",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Harjit Sawhney","Angela Hamilton"]},{name:"Blue Box",start:"Dec 25",end:"Jan 26",reason:"Budget Issue",reps:["Joshua Bylsma"]},{name:"Skybridge",start:"Jan 26",end:"Jan 26",reason:"Budget Issue",reps:["Alli Fowler","Joshua Crawford","Angela Hamilton","Tim Lan","Alyssa Perez"]},{name:"Ovaro",start:"Jan 26",end:"Feb 26",reason:"Budget Issue",reps:["Joshua Bylsma"]}]}
 ];
-
 const ALL_REPS=["Anand Pandey","Angela Hamilton","Ariel Wolfe","Bill O'Leary","Blake Peremel","Cesar Garcia","Clara Galetti","Daniel Davies","Derek Sindelman","Dominic Libertoski","Edgar Medina","Eli Johnson","Eric Tuttle","Frankie Dore","Harjit Sawhney","Jay Jones","Jesse Shorr","Johan Vrey","Joshua Bylsma","Joshua Crawford","Kellee Madonia","Korbin Kirk","Logan Kennedy","Luis Rodriguez","Mark Kreidler","Michele Harris","Paige Givinsky","Rebecca Barnes","Savannah Peck","Stephanie Hackert","Tim Lan","Alli Fowler","Alyssa Perez","Anthony Allen"];
 
 function getRepAccounts(rn){const a=[];SOMS.forEach(s=>{s.accounts.forEach(ac=>{if(ac.reps&&ac.reps.includes(rn))a.push({...ac,som:s.name});});});return a;}
+function personMonthly(accs){return ALL_M.map(m=>{const mi=mIdx(m);let ac=0,cl=0;accs.forEach(a=>{const s=mIdx(a.start),e=a.end?mIdx(a.end):Infinity;if(s<=mi){if(!a.end)ac++;else if(e===mi)cl++;else if(e>mi)ac++;}});return{m,ac,cl};}).filter(d=>d.ac>0||d.cl>0);}
+function personCR(accs){return withCR(personMonthly(accs)).filter(d=>d.cr!==null&&d.ac>0);}
 
-function PersonCharts({accounts,perf}){
-  const crTrend=useMemo(()=>personCR(accounts),[accounts]);
-  const moAc=useMemo(()=>personMonthly(accounts),[accounts]);
+// ── CHART HELPERS ──
+let charts={};
+function makeChart(id,cfg){if(charts[id]){charts[id].destroy();}const ctx=document.getElementById(id);if(!ctx)return;charts[id]=new Chart(ctx,cfg);}
+
+function statHTML(label,value,color,sub){
+  return `<div class="stat"><div class="stat-bar" style="background:${color||'#5aab1f'}"></div><div class="stat-label">${label}</div><div class="stat-value" style="color:${color||'#0d0d0d'}">${value!=null?value:'-'}</div>${sub?`<div class="stat-sub">${sub}</div>`:''}</div>`;
+}
+function pillHTML(label,color){return `<span class="pill" style="background:${color}15;color:${color};border:1px solid ${color}35">${label}</span>`;}
+
+function accountTableHTML(accounts){
+  const sorted=[...accounts].sort((a,b)=>a.end?1:-1);
+  let h='<div class="card"><div class="section-label">Account Detail \u2014 '+accounts.length+' accounts</div><div style="overflow-x:auto"><table><thead><tr><th>Account</th><th>Start</th><th>Status</th><th>Reason</th><th>Reps</th></tr></thead><tbody>';
+  sorted.forEach((a,i)=>{
+    h+=`<tr><td style="font-weight:500">${a.name}</td><td class="muted" style="font-size:11px">${a.start}</td><td>${a.end?pillHTML('Churned '+a.end,'#ef4444'):pillHTML('Active','#5aab1f')}</td><td>${a.reason?pillHTML(a.reason,rsnCol(a.reason)):'<span class="muted">\u2014</span>'}</td><td class="muted" style="font-size:11px">${a.reps?a.reps.join(', '):'\u2014'}</td></tr>`;
+  });
+  h+='</tbody></table></div></div>';
+  return h;
+}
+
+function personChartsHTML(prefix,accounts,perf){
+  const crTrend=personCR(accounts);
+  const moAc=personMonthly(accounts);
   const active=accounts.filter(a=>!a.end).length,lost=accounts.filter(a=>a.end).length,total=accounts.length;
   const cr=total?((lost/total)*100).toFixed(1):0;
   const latest=crTrend[crTrend.length-1];
   const avg12=crTrend.slice(-12);
   const avgCR=avg12.length?(avg12.reduce((s,d)=>s+d.cr,0)/avg12.length).toFixed(1):"-";
   const cs=churnScore(accounts);
-  return(
-    <div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:14}}>
-        <Stat label="Active Accounts" value={active} color="#3a8c0f"/>
-        <Stat label="Churned" value={lost} color="#f87171"/>
-        <Stat label="Acct Churn Rate" value={cr+"%"} color={crCol(parseFloat(cr))} sub="churned / total"/>
-        <Stat label="Latest Monthly CR" value={latest?latest.cr+"%":"-"} color={crCol(latest?latest.cr:null)} sub={latest?latest.m:""}/>
-        <Stat label="12-Mo Avg CR" value={avgCR+"%"} color="#8dc63f"/>
-        <Stat label="Churn Score" value={cs} color={cs<15?"#3a8c0f":cs<35?"#8dc63f":"#bcd97a"} sub="lower = better"/>
-      </div>
-      {crTrend.length>0&&<div style={CS}><SL>Churn Rate Trend</SL><ResponsiveContainer width="100%" height={130}><BarChart data={crTrend}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}} tickFormatter={v=>v+"%"}/><Tooltip {...TT} formatter={v=>v+"%"}/><Bar dataKey="cr" radius={[3,3,0,0]}>{crTrend.map((d,i)=><Cell key={i} fill={crCol(d.cr)}/>)}</Bar></BarChart></ResponsiveContainer></div>}
-      {moAc.length>0&&<div style={CS}><SL>Active Accounts Trend</SL><ResponsiveContainer width="100%" height={100}><LineChart data={moAc}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}}/><Tooltip {...TT}/><Line type="monotone" dataKey="ac" stroke="#34d399" strokeWidth={2} dot={false}/></LineChart></ResponsiveContainer></div>}
-      {perf&&perf.length>0&&<div style={CS}><SL>MQL / SQL / Meetings Trend</SL><ResponsiveContainer width="100%" height={130}><LineChart data={perf}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}}/><Tooltip {...TT}/><Legend wrapperStyle={{color:MU,fontSize:11,fontFamily:FN}}/><Line type="monotone" dataKey="mql" name="MQLs" stroke="#a78bfa" strokeWidth={2} dot={false} connectNulls/><Line type="monotone" dataKey="sql" name="SQLs" stroke="#38bdf8" strokeWidth={2} dot={false} connectNulls/><Line type="monotone" dataKey="mtg" name="Meetings" stroke="#34d399" strokeWidth={2} dot={false} connectNulls/></LineChart></ResponsiveContainer></div>}
-      <div style={CS}><SL>{"Account Detail \u2014 "+total+" accounts"}</SL><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:FN}}><thead><tr style={{borderBottom:"1px solid "+B2}}>{["Account","Start","Status","Reason","Reps"].map(h=><th key={h} style={{padding:"6px 10px",textAlign:"left",color:MU,fontWeight:700,fontSize:9,letterSpacing:"1px",textTransform:"uppercase"}}>{h}</th>)}</tr></thead><tbody>{[...accounts].sort((a,b)=>a.end?1:-1).map((a,i)=><tr key={i} style={{borderBottom:"1px solid "+BD,background:i%2?C3:"transparent"}}><td style={{padding:"7px 10px",color:TX,fontWeight:500}}>{a.name}</td><td style={{padding:"7px 10px",color:MU,fontSize:11}}>{a.start}</td><td style={{padding:"7px 10px"}}>{a.end?<Pill label={"Churned "+a.end} color="#ef4444"/>:<Pill label="Active" color={G}/>}</td><td style={{padding:"7px 10px"}}>{a.reason?<Pill label={a.reason} color={rsnCol(a.reason)}/>:<span style={{color:M2}}>{"\u2014"}</span>}</td><td style={{padding:"7px 10px",color:MU,fontSize:11}}>{a.reps?a.reps.join(", "):"\u2014"}</td></tr>)}</tbody></table></div></div>
-    </div>
-  );
+  let h='<div class="stats">';
+  h+=statHTML('Active Accounts',active,'#3a8c0f');
+  h+=statHTML('Churned',lost,'#f87171');
+  h+=statHTML('Acct Churn Rate',cr+'%',crCol(parseFloat(cr)),'churned / total');
+  h+=statHTML('Latest Monthly CR',latest?latest.cr+'%':'-',crCol(latest?latest.cr:null),latest?latest.m:'');
+  h+=statHTML('12-Mo Avg CR',avgCR+'%','#8dc63f');
+  h+=statHTML('Churn Score',cs,cs<15?'#3a8c0f':cs<35?'#8dc63f':'#bcd97a','lower = better');
+  h+='</div>';
+  if(crTrend.length>0) h+=`<div class="card"><div class="section-label">Churn Rate Trend</div><div class="chart-wrap"><canvas id="${prefix}-cr" height="130"></canvas></div></div>`;
+  if(moAc.length>0) h+=`<div class="card"><div class="section-label">Active Accounts Trend</div><div class="chart-wrap"><canvas id="${prefix}-ac" height="100"></canvas></div></div>`;
+  if(perf&&perf.length>0) h+=`<div class="card"><div class="section-label">MQL / SQL / Meetings Trend</div><div class="chart-wrap"><canvas id="${prefix}-perf" height="130"></canvas></div></div>`;
+  h+=accountTableHTML(accounts);
+
+  setTimeout(()=>{
+    if(crTrend.length>0) makeChart(prefix+'-cr',{type:'bar',data:{labels:crTrend.map(d=>d.m),datasets:[{data:crTrend.map(d=>d.cr),backgroundColor:crTrend.map(d=>crCol(d.cr)),borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{y:{ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9}}}}}});
+    if(moAc.length>0) makeChart(prefix+'-ac',{type:'line',data:{labels:moAc.map(d=>d.m),datasets:[{data:moAc.map(d=>d.ac),borderColor:'#34d399',borderWidth:2,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}}}}});
+    if(perf&&perf.length>0) makeChart(prefix+'-perf',{type:'line',data:{labels:perf.map(d=>d.m),datasets:[{label:'MQLs',data:perf.map(d=>d.mql),borderColor:'#a78bfa',borderWidth:2,fill:false,tension:0.3,pointRadius:0},{label:'SQLs',data:perf.map(d=>d.sql),borderColor:'#38bdf8',borderWidth:2,fill:false,tension:0.3,pointRadius:0},{label:'Meetings',data:perf.map(d=>d.mtg||null),borderColor:'#34d399',borderWidth:2,fill:false,tension:0.3,pointRadius:0,spanGaps:true}]},options:{responsive:true,scales:{x:{ticks:{font:{size:9}}}}}});
+  },50);
+  return h;
 }
 
-function CompanyTab(){
-  const [cA,setA]=useState("Mar 25");const [cB,setB]=useState("Mar 26");
+// ── TAB RENDERING ──
+function showTab(tab){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['company','reps','soms','method'][i]===tab);});
+  const c=document.getElementById('main-content');
+  const titles={company:'Company <span>Overview</span>',reps:'Sales <span>Reps</span>',soms:'Sales <span>Ops Managers</span>',method:'Data <span>Methodology</span>'};
+  let h=`<div class="page-title">${titles[tab]}</div><div class="title-bar"></div>`;
+  if(tab==='company') h+=renderCompany();
+  else if(tab==='reps') h+=renderReps();
+  else if(tab==='soms') h+=renderSOMs();
+  else if(tab==='method') h+=renderMethod();
+  c.innerHTML=h;
+  if(tab==='company') initCompanyCharts();
+}
+
+function renderCompany(){
   const r18=CD.slice(-18);const lat=CD[CD.length-1];const vCR=CD.filter(d=>d.cr!=null);
   const a6=(vCR.slice(-6).reduce((s,d)=>s+d.cr,0)/6).toFixed(2);
   const a12=(vCR.slice(-12).reduce((s,d)=>s+d.cr,0)/12).toFixed(2);
-  const rA=CD.find(d=>d.m===cA),rB=CD.find(d=>d.m===cB);
-  const dlt=(a,b,k)=>{if(!a||!b||a[k]==null||b[k]==null)return null;const d=b[k]-a[k];return{v:d,pct:((d/a[k])*100).toFixed(1)};};
-  const ss={width:"100%",background:C2,color:TX,border:"1px solid "+B2,borderRadius:4,padding:"8px 12px",fontSize:13,fontFamily:FN,outline:"none",cursor:"pointer"};
-  return(
-    <div>
-      <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}>
-        <Stat label={"\u2014 MRR Mar 26"} value={lat.mrr+"K"} color={G}/><Stat label="Active Clients" value={lat.ac} color={TX}/><Stat label="Lost This Month" value={lat.cl} color="#ef4444"/><Stat label="Churn Rate" value={lat.cr+"%"} color={crCol(lat.cr)} sub="3-mo trailing avg"/><Stat label="6-Mo Avg" value={a6+"%"} color="#8dc63f"/><Stat label="12-Mo Avg" value={a12+"%"} color="#5aab1f"/><Stat label="Deals Closed" value={lat.dc} color={G}/><Stat label="Net Change" value={(lat.dc-lat.cl>=0?"+":"")+(lat.dc-lat.cl)} color={lat.dc-lat.cl>=0?G:"#ef4444"}/>
-      </div>
-      <div style={CS}><SL>Churn Rate % — Lost / Avg Active (prior 3 months)</SL><ResponsiveContainer width="100%" height={140}><BarChart data={r18.filter(d=>d.cr!=null)}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}} tickFormatter={v=>v+"%"}/><Tooltip {...TT} formatter={v=>v+"%"}/><Bar dataKey="cr" radius={[3,3,0,0]}>{r18.filter(d=>d.cr!=null).map((d,i)=><Cell key={i} fill={crCol(d.cr)}/>)}</Bar></BarChart></ResponsiveContainer></div>
-      <div style={CS}><SL>MRR Trend — 18 Months</SL><ResponsiveContainer width="100%" height={120}><LineChart data={r18}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}} tickFormatter={v=>v+"K"}/><Tooltip {...TT} formatter={v=>v+"K"}/><Line type="monotone" dataKey="mrr" stroke={G} strokeWidth={2.5} dot={false}/></LineChart></ResponsiveContainer></div>
-      <div style={CS}><SL>Active Clients</SL><ResponsiveContainer width="100%" height={110}><LineChart data={r18}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}}/><Tooltip {...TT}/><Line type="monotone" dataKey="ac" stroke="#38bdf8" strokeWidth={2.5} dot={false}/></LineChart></ResponsiveContainer></div>
-      <div style={CS}><SL>Closed vs Lost</SL><ResponsiveContainer width="100%" height={120}><BarChart data={r18}><CartesianGrid strokeDasharray="3 3" stroke={B2}/><XAxis dataKey="m" tick={{fill:MU,fontSize:9,fontFamily:FN}}/><YAxis tick={{fill:MU,fontSize:10,fontFamily:FN}}/><Tooltip {...TT}/><Legend wrapperStyle={{color:MU,fontSize:11,fontFamily:FN}}/><Bar dataKey="dc" name="Closed" fill={G} radius={[3,3,0,0]}/><Bar dataKey="cl" name="Lost" fill="#ef4444" radius={[3,3,0,0]}/></BarChart></ResponsiveContainer></div>
-      <div style={CS}><SL>Period Comparison</SL><div style={{display:"flex",gap:12,marginBottom:14,flexWrap:"wrap"}}>{[["Period A",cA,setA],["Period B",cB,setB]].map(([l,v,s])=><div key={l} style={{flex:1,minWidth:140}}><div style={{color:MU,fontSize:9,marginBottom:5,textTransform:"uppercase",letterSpacing:"1px",fontWeight:700,fontFamily:FN}}>{l}</div><select value={v} onChange={e=>s(e.target.value)} style={ss}>{CD.map(d=><option key={d.m} value={d.m}>{d.m}</option>)}</select></div>)}</div>
-      {rA&&rB&&<table style={{width:"100%",borderCollapse:"collapse",fontSize:13,fontFamily:FN}}><thead><tr style={{borderBottom:"1px solid "+B2}}>{["Metric","A","B","Delta"].map(h=><th key={h} style={{padding:"7px 10px",textAlign:"left",color:MU,fontWeight:700,fontSize:9,textTransform:"uppercase",letterSpacing:"1px"}}>{h}</th>)}</tr></thead><tbody>{[{l:"MRR",k:"mrr",f:v=>v+"K",bad:false},{l:"Active Clients",k:"ac",f:v=>v,bad:false},{l:"Deals Closed",k:"dc",f:v=>v,bad:false},{l:"Contracts Lost",k:"cl",f:v=>v,bad:true},{l:"Churn %",k:"cr",f:v=>v!=null?v+"%":"\u2014",bad:true},{l:"EBITDA",k:"eb",f:v=>v+"K",bad:false}].map(row=>{const d=dlt(rA,rB,row.k);const clr=d?((row.bad?(d.v<0):(d.v>0))?G:(row.bad?(d.v>0):(d.v<0))?"#ef4444":MU):MU;return <tr key={row.k} style={{borderBottom:"1px solid "+BD}}><td style={{padding:"8px 10px",color:MU}}>{row.l}</td><td style={{padding:"8px 10px",color:TX}}>{row.f(rA[row.k])}</td><td style={{padding:"8px 10px",color:TX}}>{row.f(rB[row.k])}</td><td style={{padding:"8px 10px",color:clr,fontWeight:700}}>{d?(d.v>0?"+":"")+(typeof d.v==="number"&&!Number.isInteger(d.v)?d.v.toFixed(2):d.v)+" ("+d.pct+"%)":"\u2014"}</td></tr>;})}</tbody></table>}</div>
-    </div>
-  );
+  let h='<div class="stats">';
+  h+=statHTML('MRR \u2014 Mar 26',lat.mrr+'K','#5aab1f');
+  h+=statHTML('Active Clients',lat.ac,'#0d0d0d');
+  h+=statHTML('Lost This Month',lat.cl,'#ef4444');
+  h+=statHTML('Churn Rate',lat.cr+'%',crCol(lat.cr),'3-mo trailing avg');
+  h+=statHTML('6-Mo Avg',a6+'%','#8dc63f');
+  h+=statHTML('12-Mo Avg',a12+'%','#5aab1f');
+  h+=statHTML('Deals Closed',lat.dc,'#5aab1f');
+  h+=statHTML('Net Change',(lat.dc-lat.cl>=0?'+':'')+(lat.dc-lat.cl),lat.dc-lat.cl>=0?'#5aab1f':'#ef4444');
+  h+='</div>';
+  h+=`<div class="card"><div class="section-label">Churn Rate % \u2014 Lost / Avg Active (prior 3 months)</div><div class="chart-wrap"><canvas id="co-cr" height="140"></canvas></div></div>`;
+  h+=`<div class="card"><div class="section-label">MRR Trend \u2014 18 Months</div><div class="chart-wrap"><canvas id="co-mrr" height="120"></canvas></div></div>`;
+  h+=`<div class="card"><div class="section-label">Active Clients</div><div class="chart-wrap"><canvas id="co-ac" height="110"></canvas></div></div>`;
+  h+=`<div class="card"><div class="section-label">Closed vs Lost</div><div class="chart-wrap"><canvas id="co-cl" height="120"></canvas></div></div>`;
+  h+=`<div class="card"><div class="section-label">Period Comparison</div><div style="display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap"><div style="flex:1;min-width:140"><div class="stat-label">Period A</div><select id="pA" onchange="updateComparison()">${CD.map(d=>`<option value="${d.m}"${d.m==='Mar 25'?' selected':''}>${d.m}</option>`).join('')}</select></div><div style="flex:1;min-width:140"><div class="stat-label">Period B</div><select id="pB" onchange="updateComparison()">${CD.map(d=>`<option value="${d.m}"${d.m==='Mar 26'?' selected':''}>${d.m}</option>`).join('')}</select></div></div><div id="comp-table"></div></div>`;
+  return h;
 }
 
-function SOMsTab(){
-  const [sel,setSel]=useState("");const som=SOMS.find(s=>s.name===sel);
-  return(
-    <div>
-      <div style={{marginBottom:20}}><div style={{color:MU,fontSize:9,marginBottom:6,fontWeight:700,textTransform:"uppercase",letterSpacing:"1.2px",fontFamily:FN}}>Select Sales Ops Manager</div><select value={sel} onChange={e=>setSel(e.target.value)} style={{width:"100%",maxWidth:400,background:C2,color:TX,border:"1px solid "+B2,borderRadius:4,padding:"9px 14px",fontSize:14,fontFamily:FN,outline:"none"}}><option value="">{"\u2014 Choose a SOM \u2014"}</option>{SOMS.map(s=><option key={s.name} value={s.name}>{s.name}</option>)}</select></div>
-      {som?(<div><div style={{marginBottom:16,paddingBottom:16,borderBottom:"1px solid "+BD}}><div style={{color:TX,fontSize:20,fontWeight:800,letterSpacing:"-0.5px",fontFamily:FN}}>{som.name}</div><div style={{color:MU,fontSize:11,marginTop:4,fontFamily:FN}}><span style={{color:G,fontWeight:700}}>{som.accounts.filter(a=>!a.end).length}</span>{" active accounts"+DOT}<span style={{color:"#ef4444",fontWeight:700}}>{som.accounts.filter(a=>a.end).length}</span>{" churned"}</div></div><PersonCharts accounts={som.accounts} perf={som.perf}/><div style={CS}><SL>SEs in Portfolio</SL><div style={{display:"flex",flexWrap:"wrap",gap:5}}>{som.reps.map((r,i)=><Pill key={i} label={r} color={G}/>)}</div></div></div>):(<div style={{color:M2,fontSize:13,padding:"48px 0",textAlign:"center",fontFamily:FN}}>Select a SOM above to load their dashboard.</div>)}
-    </div>
-  );
+function initCompanyCharts(){
+  const r18=CD.slice(-18);const crData=r18.filter(d=>d.cr!=null);
+  makeChart('co-cr',{type:'bar',data:{labels:crData.map(d=>d.m),datasets:[{data:crData.map(d=>d.cr),backgroundColor:crData.map(d=>crCol(d.cr)),borderRadius:3}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'%'}}},scales:{y:{ticks:{callback:v=>v+'%'}},x:{ticks:{font:{size:9}}}}}});
+  makeChart('co-mrr',{type:'line',data:{labels:r18.map(d=>d.m),datasets:[{data:r18.map(d=>d.mrr),borderColor:'#5aab1f',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.raw+'K'}}},scales:{y:{ticks:{callback:v=>v+'K'}},x:{ticks:{font:{size:9}}}}}});
+  makeChart('co-ac',{type:'line',data:{labels:r18.map(d=>d.m),datasets:[{data:r18.map(d=>d.ac),borderColor:'#38bdf8',borderWidth:2.5,fill:false,tension:0.3,pointRadius:0}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:9}}}}}});
+  makeChart('co-cl',{type:'bar',data:{labels:r18.map(d=>d.m),datasets:[{label:'Closed',data:r18.map(d=>d.dc),backgroundColor:'#5aab1f',borderRadius:3},{label:'Lost',data:r18.map(d=>d.cl),backgroundColor:'#ef4444',borderRadius:3}]},options:{responsive:true,scales:{x:{ticks:{font:{size:9}}}}}});
+  updateComparison();
 }
 
-function RepsTab(){
-  const [sel,setSel]=useState("");const accs=useMemo(()=>sel?getRepAccounts(sel):[],[sel]);const somN=[...new Set(accs.map(a=>a.som))];
-  return(
-    <div>
-      <div style={{marginBottom:20}}><div style={{color:MU,fontSize:9,marginBottom:6,fontWeight:700,textTransform:"uppercase",letterSpacing:"1.2px",fontFamily:FN}}>Select Rep</div><select value={sel} onChange={e=>setSel(e.target.value)} style={{width:"100%",maxWidth:400,background:C2,color:TX,border:"1px solid "+B2,borderRadius:4,padding:"9px 14px",fontSize:14,fontFamily:FN,outline:"none"}}><option value="">{"\u2014 Choose a rep \u2014"}</option>{ALL_REPS.map(r=><option key={r} value={r}>{r}</option>)}</select></div>
-      {sel?(<div><div style={{marginBottom:16,paddingBottom:16,borderBottom:"1px solid "+BD}}><div style={{color:TX,fontSize:20,fontWeight:800,letterSpacing:"-0.5px",fontFamily:FN}}>{sel}</div><div style={{color:MU,fontSize:11,marginTop:4,fontFamily:FN}}>{"Sales Execution Rep"+DOT}<span style={{color:G,fontWeight:700}}>{accs.filter(a=>!a.end).length}</span>{" active accounts"+DOT}{somN.join(", ")||"\u2014"}</div></div>{accs.length>0?<PersonCharts accounts={accs} perf={null}/>:<div style={{...CS,color:MU,fontSize:13,fontFamily:FN}}>No account assignments found for this rep.</div>}</div>):(<div style={{color:M2,fontSize:13,padding:"48px 0",textAlign:"center",fontFamily:FN}}>Select a rep above to load their dashboard.</div>)}
-    </div>
-  );
+function updateComparison(){
+  const a=document.getElementById('pA').value,b=document.getElementById('pB').value;
+  const rA=CD.find(d=>d.m===a),rB=CD.find(d=>d.m===b);
+  if(!rA||!rB)return;
+  const dlt=(k)=>{if(rA[k]==null||rB[k]==null)return null;const d=rB[k]-rA[k];return{v:d,pct:((d/rA[k])*100).toFixed(1)};};
+  const rows=[{l:'MRR',k:'mrr',f:v=>v+'K',bad:false},{l:'Active Clients',k:'ac',f:v=>v,bad:false},{l:'Deals Closed',k:'dc',f:v=>v,bad:false},{l:'Contracts Lost',k:'cl',f:v=>v,bad:true},{l:'Churn %',k:'cr',f:v=>v!=null?v+'%':'\u2014',bad:true},{l:'EBITDA',k:'eb',f:v=>v+'K',bad:false}];
+  let h='<table><thead><tr><th>Metric</th><th>A</th><th>B</th><th>Delta</th></tr></thead><tbody>';
+  rows.forEach(row=>{
+    const d=dlt(row.k);const clr=d?((row.bad?(d.v<0):(d.v>0))?'#5aab1f':(row.bad?(d.v>0):(d.v<0))?'#ef4444':'#707070'):'#707070';
+    h+=`<tr><td class="muted">${row.l}</td><td>${row.f(rA[row.k])}</td><td>${row.f(rB[row.k])}</td><td style="color:${clr};font-weight:700">${d?(d.v>0?'+':'')+(typeof d.v==='number'&&!Number.isInteger(d.v)?d.v.toFixed(2):d.v)+' ('+d.pct+'%)':'\u2014'}</td></tr>`;
+  });
+  h+='</tbody></table>';
+  document.getElementById('comp-table').innerHTML=h;
 }
 
-const METHOD_DATA=[
-  {t:"SOMs (11 listed)",i:["David Harris, David Rosenthal, Grant Paris, James Bellew, Jason Andrews, Matt Guthrie, Merv Charles, Paige Givinsky (Landbase), Venus Powers","Haset Aklilu (VP of Product) \u2014 GEA and JPM Chase assigned","No SOM Account \u2014 accounts without an assigned SOM"]},
-  {t:"Reps (34)",i:["Anand Pandey, Angela Hamilton, Ariel Wolfe, Bill O'Leary, Blake Peremel, Cesar Garcia, Clara Galetti, Daniel Davies, Derek Sindelman, Dominic Libertoski, Edgar Medina, Eli Johnson, Eric Tuttle, Frankie Dore, Harjit Sawhney, Jay Jones, Jesse Shorr, Johan Vrey, Joshua Bylsma, Joshua Crawford, Kellee Madonia, Korbin Kirk, Logan Kennedy, Luis Rodriguez, Mark Kreidler, Michele Harris, Paige Givinsky, Rebecca Barnes, Savannah Peck, Stephanie Hackert, Tim Lan, Alli Fowler, Alyssa Perez, Anthony Allen"]},
-  {t:"Churn Formula",i:["Company: Lost / Avg(Active Clients prior 3 months) x 100","Person-level: same formula applied to their account counts","Mar 2026 example: 10 / avg(106,105,101) = 9.62%"]},
-  {t:"Data Sources",i:["Cash Flow & Billings \u2014 MRR, active clients, closed, lost, EBITDA (Feb 2022\u2013Mar 2026)","Accounts Matrix \u2014 account > SOM > rep assignments with start/end dates","Cancellations List (Jan\u2013May 2026)","SOM Performance PDF \u2014 MQL/SQL/meetings per SOM (Jul 2024\u2013Mar 2026)","Termination Analysis \u2014 churn reasons per account","Org Chart \u2014 definitive role assignments"]},
-  {t:"Churn Score (lower = better)",i:["Rep Issue / Sales Ops Issue: +8 | Lack of Results / No Closed Deals: +6 | Single Rep / No Show: +5 | Poor List / Slow Start: +3 | Budget / Landbase / Didnt Pay: +1","Green 0\u201314 | Yellow 15\u201334 | Red 35+"]}
-];
-
-function App(){
-  const [tab,setTab]=useState("company");
-  const tabs=[{id:"company",label:"Company"},{id:"reps",label:"Sales Reps"},{id:"soms",label:"Sales Ops"},{id:"method",label:"Methodology"}];
-  return(
-    <div style={{background:BGC,minHeight:"100vh",fontFamily:FN,color:TX}}>
-      <div style={{background:AN,borderBottom:"1px solid "+GD+"40",padding:"7px 20px",textAlign:"center",fontSize:11,fontWeight:600,letterSpacing:"0.8px",color:"#3a6b10",fontFamily:FN}}>{"PERFORMANCE & CHURN INTELLIGENCE DASHBOARD"+DOT+"MARCH 2026"+DOT+"INTERNAL USE ONLY"}</div>
-      <div style={{background:"#fff",borderBottom:"1px solid "+BD,padding:"0 24px",display:"flex",alignItems:"center",justifyContent:"space-between",height:52,position:"sticky",top:0,zIndex:100}}>
-        <div style={{display:"flex",alignItems:"center",gap:10}}><div style={{width:4,height:24,background:G,borderRadius:2}}/><div><div style={{fontSize:17,fontWeight:900,color:TX,letterSpacing:"2px",textTransform:"uppercase",fontFamily:FN,lineHeight:1}}>MARTAL GROUP</div><div style={{fontSize:8,color:MU,letterSpacing:"1.5px",textTransform:"uppercase",fontFamily:FN,marginTop:2}}>B2B Lead Generation Agency</div></div></div>
-        <div style={{display:"flex",gap:0}}>{tabs.map(t=><button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"0 18px",height:52,border:"none",borderBottom:tab===t.id?"2px solid "+G:"2px solid transparent",cursor:"pointer",fontSize:11,fontWeight:700,letterSpacing:"1px",textTransform:"uppercase",background:"transparent",color:tab===t.id?G:MU,fontFamily:FN,transition:"color 0.15s, border-color 0.15s"}}>{t.label}</button>)}</div>
-      </div>
-      <div style={{maxWidth:980,margin:"0 auto",padding:"28px 20px"}}>
-        <div style={{marginBottom:24}}><div style={{fontSize:24,fontWeight:900,color:TX,textTransform:"uppercase",letterSpacing:"-0.5px",fontFamily:FN,lineHeight:1.1}}>{tab==="company"&&<span>Company <span style={{color:G}}>Overview</span></span>}{tab==="reps"&&<span>Sales <span style={{color:G}}>Reps</span></span>}{tab==="soms"&&<span>Sales <span style={{color:G}}>Ops Managers</span></span>}{tab==="method"&&<span>Data <span style={{color:G}}>Methodology</span></span>}</div><div style={{width:40,height:3,background:G,borderRadius:2,marginTop:8}}/></div>
-        {tab==="company"&&<CompanyTab/>}
-        {tab==="reps"&&<RepsTab/>}
-        {tab==="soms"&&<SOMsTab/>}
-        {tab==="method"&&<div>{METHOD_DATA.map(s=><div key={s.t} style={{...CS,marginBottom:10}}><div style={{color:G,fontWeight:800,fontSize:11,marginBottom:10,textTransform:"uppercase",letterSpacing:"1.5px",fontFamily:FN,display:"flex",alignItems:"center",gap:8}}><div style={{width:12,height:12,background:G,borderRadius:2,flexShrink:0}}/>{s.t}</div><ul style={{margin:0,padding:"0 0 0 20px"}}>{s.i.map((item,i)=><li key={i} style={{marginBottom:5,color:MU,fontSize:12,lineHeight:1.7,fontFamily:FN}}>{item}</li>)}</ul></div>)}</div>}
-      </div>
-    </div>
-  );
+function renderSOMs(){
+  let h='<div style="margin-bottom:20px"><div class="stat-label">Select Sales Ops Manager</div><select id="som-sel" onchange="loadSOM()"><option value="">\u2014 Choose a SOM \u2014</option>';
+  SOMS.forEach(s=>{h+=`<option value="${s.name}">${s.name}</option>`;});
+  h+='</select></div><div id="som-content"><div class="placeholder">Select a SOM above to load their dashboard.</div></div>';
+  return h;
 }
 
-ReactDOM.render(<App/>, document.getElementById("root"));
+function loadSOM(){
+  const name=document.getElementById('som-sel').value;
+  const el=document.getElementById('som-content');
+  if(!name){el.innerHTML='<div class="placeholder">Select a SOM above to load their dashboard.</div>';return;}
+  const som=SOMS.find(s=>s.name===name);
+  let h=`<div class="som-header"><div class="som-name">${som.name}</div><div class="som-meta"><span style="color:#5aab1f;font-weight:700">${som.accounts.filter(a=>!a.end).length}</span> active accounts \u00B7 <span style="color:#ef4444;font-weight:700">${som.accounts.filter(a=>a.end).length}</span> churned</div></div>`;
+  h+=personChartsHTML('som',som.accounts,som.perf);
+  h+=`<div class="card"><div class="section-label">SEs in Portfolio</div><div class="pills-wrap">${som.reps.map(r=>pillHTML(r,'#5aab1f')).join('')}</div></div>`;
+  el.innerHTML=h;
+}
+
+function renderReps(){
+  let h='<div style="margin-bottom:20px"><div class="stat-label">Select Rep</div><select id="rep-sel" onchange="loadRep()"><option value="">\u2014 Choose a rep \u2014</option>';
+  ALL_REPS.forEach(r=>{h+=`<option value="${r}">${r}</option>`;});
+  h+='</select></div><div id="rep-content"><div class="placeholder">Select a rep above to load their dashboard.</div></div>';
+  return h;
+}
+
+function loadRep(){
+  const name=document.getElementById('rep-sel').value;
+  const el=document.getElementById('rep-content');
+  if(!name){el.innerHTML='<div class="placeholder">Select a rep above to load their dashboard.</div>';return;}
+  const accs=getRepAccounts(name);
+  const somN=[...new Set(accs.map(a=>a.som))];
+  let h=`<div class="som-header"><div class="som-name">${name}</div><div class="som-meta">Sales Execution Rep \u00B7 <span style="color:#5aab1f;font-weight:700">${accs.filter(a=>!a.end).length}</span> active accounts \u00B7 ${somN.join(', ')||'\u2014'}</div></div>`;
+  if(accs.length>0) h+=personChartsHTML('rep',accs,null);
+  else h+='<div class="card muted">No account assignments found for this rep.</div>';
+  el.innerHTML=h;
+}
+
+function renderMethod(){
+  const data=[
+    {t:"SOMs (11 listed)",i:["David Harris, David Rosenthal, Grant Paris, James Bellew, Jason Andrews, Matt Guthrie, Merv Charles, Paige Givinsky (Landbase), Venus Powers","Haset Aklilu (VP of Product) \u2014 GEA and JPM Chase assigned","No SOM Account \u2014 accounts without an assigned SOM"]},
+    {t:"Reps (34)",i:["Anand Pandey, Angela Hamilton, Ariel Wolfe, Bill O'Leary, Blake Peremel, Cesar Garcia, Clara Galetti, Daniel Davies, Derek Sindelman, Dominic Libertoski, Edgar Medina, Eli Johnson, Eric Tuttle, Frankie Dore, Harjit Sawhney, Jay Jones, Jesse Shorr, Johan Vrey, Joshua Bylsma, Joshua Crawford, Kellee Madonia, Korbin Kirk, Logan Kennedy, Luis Rodriguez, Mark Kreidler, Michele Harris, Paige Givinsky, Rebecca Barnes, Savannah Peck, Stephanie Hackert, Tim Lan, Alli Fowler, Alyssa Perez, Anthony Allen"]},
+    {t:"Churn Formula",i:["Company: Lost / Avg(Active Clients prior 3 months) x 100","Person-level: same formula applied to their account counts","Mar 2026 example: 10 / avg(106,105,101) = 9.62%"]},
+    {t:"Data Sources",i:["Cash Flow & Billings \u2014 MRR, active clients, closed, lost, EBITDA (Feb 2022\u2013Mar 2026)","Accounts Matrix \u2014 account > SOM > rep assignments with start/end dates","Cancellations List (Jan\u2013May 2026)","SOM Performance PDF \u2014 MQL/SQL/meetings per SOM (Jul 2024\u2013Mar 2026)","Termination Analysis \u2014 churn reasons per account","Org Chart \u2014 definitive role assignments"]},
+    {t:"Churn Score (lower = better)",i:["Rep Issue / Sales Ops Issue: +8 | Lack of Results / No Closed Deals: +6 | Single Rep / No Show: +5 | Poor List / Slow Start: +3 | Budget / Landbase / Didnt Pay: +1","Green 0\u201314 | Yellow 15\u201334 | Red 35+"]}
+  ];
+  return data.map(s=>`<div class="card method-block"><div class="method-title"><div class="method-icon"></div>${s.t}</div><ul class="method-list">${s.i.map(i=>`<li>${i}</li>`).join('')}</ul></div>`).join('');
+}
+
+// ── INIT ──
+showTab('company');
 </script>
 </body>
 </html>
